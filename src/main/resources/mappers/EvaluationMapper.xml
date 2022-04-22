@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dsas.model.dao.EvaluationMapper">
+    <resultMap id="BaseResultMap" type="com.dsas.model.pojo.Evaluation">
+        <id column="evaluation_id" jdbcType="INTEGER" property="evaluationId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="food_id" jdbcType="INTEGER" property="foodId"/>
+        <result column="food_name" jdbcType="INTEGER" property="foodName"/>
+        <result column="username" jdbcType="INTEGER" property="userName"/>
+        <result column="evaluation_category" jdbcType="VARCHAR" property="evaluationCategory"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="likes" jdbcType="VARCHAR" property="likes"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="disable_reason" jdbcType="VARCHAR" property="disableReason"/>
+        <result column="photo" jdbcType="VARCHAR" property="photo"/>
+        <result column="answer" jdbcType="VARCHAR" property="answer"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="totalCommentUser" javaType="INTEGER" property="totalCommentUser"/>
+        <result column="avgScore" javaType="DOUBLE" property="avgScore"/>
+
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        evaluation_id
+        ,user_id,food_id,evaluation_category,content,likes,`state`,disable_reason,photo,answer,create_time,update_time
+    </sql>
+
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dsas_evaluation
+        where evaluation_id = #{evaluationId,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.dsas.model.pojo.Evaluation">
+        update dsas_evaluation
+        <set>
+            <if test="evaluationId != null">
+                evaluation_id = #{evaluationId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="foodId != null">
+                food_id =  #{foodId,jdbcType=INTEGER},
+            </if>
+            <if test="evaluationCategory != null">
+                evaluation_category = #{evaluationCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="likes != null">
+                likes = #{likes,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                `state` = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="disableReason != null">
+                disable_reason = #{disableReason,jdbcType=VARCHAR},
+            </if>
+            <if test="photo != null">
+                photo = #{photo,jdbcType=VARCHAR},
+            </if>
+            <if test="answer != null">
+                answer = #{answer,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where evaluation_id = #{evaluationId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(evaluation_id)
+        from dsas_evaluation
+        where `state` = 1
+    </select>
+
+    <select id="selectAllEvaluation" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from  dsas_evaluation
+    </select>
+
+    <select id="selectAllEvaluations" resultMap="BaseResultMap">
+        select
+            de.evaluation_id,
+            de.user_id,
+            du.username,
+            de.food_id,
+            df.food_name,
+            de.evaluation_category,
+            de.content,
+            de.likes,
+            de.state,
+            de.disable_reason,
+            de.photo,
+            de.answer,
+            de.create_time,
+            de.update_time
+        from  dsas_evaluation de,dsas_food df,dsas_user du
+        WHERE
+            de.user_id = du.id
+          AND
+            de.food_id = df.id
+    </select>
+
+    <delete id="delEvaluationById">
+        delete from dsas_evaluation where evaluation_id = #{evaluationId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectRecentEvaluation" resultMap="BaseResultMap">
+        select
+        de.evaluation_id,
+        de.user_id,
+        du.username,
+        de.food_id,
+        df.food_name,
+        de.evaluation_category,
+        de.content,
+        de.likes,
+        de.state,
+        de.disable_reason,
+        de.photo,
+        de.answer,
+        de.create_time,
+        de.update_time
+        from  dsas_evaluation de,dsas_food df,dsas_user du
+        WHERE
+        de.user_id = du.id
+        AND
+        de.food_id = df.id
+        order by create_time desc limit 10
+    </select>
+
+    <select id="selectAllFoodInfo" resultMap="BaseResultMap">
+        SELECT de.food_id,
+               df.food_name,
+               COUNT(user_id) as totalCommentUser,
+               AVG(likes) as avgScore,
+               GROUP_CONCAT(user_id) from dsas_evaluation as de,dsas_food as df
+        where de.food_id = df.id
+        GROUP BY food_id
+        ORDER BY totalCommentUser
+        DESC limit 10
+    </select>
+</mapper>

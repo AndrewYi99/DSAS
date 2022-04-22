@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dsas.model.dao.FoodMapper">
+    <resultMap id="BaseResultMap" type="com.dsas.model.pojo.Food">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="food_name" jdbcType="VARCHAR" property="foodName"/>
+        <result column="food_description" jdbcType="VARCHAR" property="foodDescription"/>
+        <result column="food_image" jdbcType="VARCHAR" property="foodImage"/>
+        <result column="price" jdbcType="INTEGER" property="price"/>
+        <result column="is_recommend" jdbcType="INTEGER" property="isRecommend"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="is_today_food" jdbcType="INTEGER" property="isTodayFood"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , food_name,food_description,food_image,price,is_recommend,status, is_today_food,create_time, update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dsas_food
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.dsas.model.pojo.Food">
+        update dsas_food
+        <set>
+            <if test="foodName != null">
+                food_name = #{foodName,jdbcType=VARCHAR},
+            </if>
+            <if test="foodDescription != null">
+                food_description = #{foodDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="foodImage != null">
+                food_image = #{foodImage,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=INTEGER},
+            </if>
+            <if test="isRecommend != null">
+                is_recommend = #{isRecommend,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="isTodayFood != null">
+                is_today_food = #{isTodayFood,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(id)
+        from dsas_food
+        where status = 1
+    </select>
+
+    <select id="selectALlFoods" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from dsas_food
+    </select>
+
+
+    <delete id="delFoodById">
+        delete from dsas_food where id = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>
