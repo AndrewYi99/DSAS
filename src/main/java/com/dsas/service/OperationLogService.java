@@ -2,8 +2,10 @@ package com.dsas.service;
 
 import com.dsas.model.pojo.OperationLog;
 import com.dsas.service.impl.OperationLogServiceImp;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OperationLogService {
 
@@ -13,5 +15,11 @@ public interface OperationLogService {
    * @param userId
    * @return 操作记录list
    */
-  public List<OperationLog> findAllOperationLog(Integer userId);
+  public PageInfo findAllOperationLog(Integer pageNum, Integer pageSize, Integer userId);
+
+  /**
+   * 查询日志图表
+   * @return
+   */
+  public Map selectLogsEchart(Integer userId);
 }

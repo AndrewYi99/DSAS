@@ -20,13 +20,6 @@
                         <h3 class="card-title">基本信息</h3>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="profile-img-wrap">
-                                    <img class="inline-block" src="${currentAdmin.avatar}" alt="user">
-                                    <div class="fileupload btn">
-                                        <span class="btn-text">修改</span>
-                                        <input class="upload" type="file">
-                                    </div>
-                                </div>
                                 <div class="profile-basic">
                                     <div class="row">
                                         <div class="col-md-6">

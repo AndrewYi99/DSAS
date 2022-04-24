@@ -94,7 +94,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="chart-title">
-                                <h4>菜品评价分</h4>
+                                <h4>菜品评分统计</h4>
                             </div>
                             <div id="score"></div>
                         </div>
@@ -247,8 +247,13 @@
                     min: 0,
                     max: 100,
                     orient: 'horizontal',
-                    top:0,
-                    left:'center'
+                    top:-10,
+                    left:'center',
+                    calculable:true,                        //是否显示拖拽用的手柄（手柄能拖拽调整选中范围）
+                    realtime:true,
+                    itemWidth:20,                           //图形的宽度，即长条的宽度。
+                    itemHeight:100,
+                    text:['High', 'Low'],
                 }
             ],
             tooltip: {

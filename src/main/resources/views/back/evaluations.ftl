@@ -14,6 +14,26 @@
         <div class="content">
             <#--表格信息-->
             <div class="row">
+                <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="chart-title">
+                                <h4>评论启用状态</h4>
+                            </div>
+                            <div id="eva_status" style="width: 100%;height: 200px;display: block"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-6 col-xl-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="chart-title">
+                                <h5>评论分布统计</h5>
+                            </div>
+                            <div id="eva_category" style="width: 100%;height: 200px;display: block"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="layui-hide" id="eva_table" lay-filter="eva_table"></table>
@@ -34,49 +54,9 @@
     </div>
 </script>
 <script type="text/html" id="editBar">
-    <a class="layui-btn layui-btn-xs" lay-event="edit" style="color: white;">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
 </script>
 
-
-<script type="text/html" id="edit_form">
-    <div class="layui-col-md10" style="margin-left: 35px;margin-top: 20px">
-        <form class="layui-form layui-form-pane" lay-filter="edit_form" action="">
-            <div class="layui-form-item">
-                <label class="layui-form-label">用户名</label>
-                <div class="layui-input-block">
-                    <input type="text" name="user_name" required  lay-verify="required" placeholder="请输入新的用户名"
-                           autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">邮箱</label>
-                <div class="layui-input-block">
-                    <input type="text" name="mail_address" required  lay-verify="required" placeholder="请输入新的邮箱"
-                           autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">邮件类型</label>
-                <div class="layui-input-block">
-                    <select name="mail_type" lay-verify="required" lay-filter="mail_type">
-                        <option value="">请选择</option>
-                        <option value="注册邮件">注册邮件</option>
-                        <option value="报名邮件">报名邮件</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-form-item" style="margin-top: 20px">
-                <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                </div>
-            </div>
-
-        </form>
-
-    </div>
-</script>
 
 <script>
     layui.use('table', function(){
@@ -175,19 +155,6 @@
                     obj.del();
                     layer.close(index);
                 });
-            } else if(obj.event === 'edit'){
-                layer.open({
-                    title:'修改评论信息',
-                    type:1,
-                    area:['420px','330px'],
-                    content:$('#edit_form').html(),
-                })
-                //form.render()//更新渲染表单
-                // form.val('edit_form',{
-                //     //填充表单
-                //     user_name:obj.data.meeting_register_id,
-                //     mail_address:obj.data.mail_address
-                // })
             }else if (obj.event == 'disable'){
                 layer.confirm('真停用吗', function(index){
                     console.log(data)
@@ -239,6 +206,146 @@
         window.location.reload();
     }
     //setTimeout('myrefresh()',1000); //指定1秒刷新一次
+</script>
+<script>
+    let echartsEvaData = new Array();
+    let keys1 = new Array();
+    let values1 = new Array();
+    let keys2 = new Array();
+    let values2 = new Array();
+
+    $(document).ready(function () {
+        $.ajax({
+            url:"/admin/EvaluationEcharts4",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                for (let key in res.data) {
+                    echartsEvaData.push(
+                        {
+                            value:res.data[key],name:key
+                        }
+                    )
+                }
+                console.log(echartsEvaData)
+                if (res.status == 10000) {
+                    echart_Eva_status(echartsEvaData)
+                }
+            }
+        })
+        $.ajax({
+            url: "/admin/EvalautionEcharts5",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                for (let key in res.data) {
+                    keys1.push(key)
+                    values1.push(res.data[key])
+                }
+
+                if (res.status == 10000) {
+                    echart_Eva_total(keys1, values1)
+                }
+
+            }
+        })
+    })
+
+    function echart_Eva_status(data) {
+        let myChart = echarts.init(document.getElementById('eva_status'));
+        let option = {
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                top: '0%',
+                orient: 'vertical',
+                x:'left',
+                y:'center',
+            },
+            color:['#55ce63','#FF5722' ],
+            series: [
+                {
+                    name: '评论状态',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: true,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: data
+                }
+            ]
+        };
+        myChart.setOption(option);
+        $(window).resize(function () {
+            myChart.resize();
+        })
+    }
+    function echart_Eva_total(keys,values) {
+        let myChart = echarts.init(document.getElementById('eva_category'));
+        let option ={
+            xAxis: {
+                type: 'category',
+                data: keys,
+                axisLabel: { interval: 0, rotate: 30 },
+                axisTick: {
+                    alignWithLabel: true
+                },
+            },
+            yAxis: {
+                type: 'value'
+            },
+            grid: [
+                {
+                    left: '0%',
+                    right: '0%',
+                    bottom: '0%',
+                    top: '10%',
+                    containLabel: true
+                }
+            ],
+            series: [
+                {
+                    name: '评论次数',
+                    data: values,
+                    type: 'line',
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true, //开启显示
+                                position: 'top', //在上方显示
+                                textStyle: { //数值样式
+                                    color: 'black',
+                                    fontSize: 10
+                                }
+                            }
+                        }
+                    },
+                }
+            ]
+        };
+        myChart.setOption(option);
+        $(window).resize(function () {
+            myChart.resize();
+        })
+    }
 </script>
 </body>
 </html>

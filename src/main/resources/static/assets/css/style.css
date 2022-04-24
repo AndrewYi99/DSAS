@@ -1675,7 +1675,7 @@ ul.chat-user-total li i.old-users {
 	overflow: hidden;
 }
 .profile-basic {
-	margin-left: 140px;
+	/*margin-left: 140px;*/
 }
 .profile-img-wrap img {
 	width: 120px;
@@ -2713,7 +2713,7 @@ a.fc-event:not([href]) {
 	width: 150px;
 }
 .profile-view .profile-basic {
-	margin-left: 170px;
+	/*margin-left: 170px;*/
 }
 .staff-msg {
 	margin-top: 30px;

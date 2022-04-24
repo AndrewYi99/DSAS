@@ -17,6 +17,7 @@ import com.dsas.util.VerifyCodeUtil;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -128,14 +129,20 @@ public class AdminController {
   public ModelAndView showAdminProfile(HttpSession session) {
     ModelAndView modelAndView = new ModelAndView("/back/profile");
     User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
-    // 获取当前用户的所有日志列表
-    List<OperationLog> allOperationLog =
-        operationLogService.findAllOperationLog(currentAdmin.getId());
-
     // 日志列表
-    modelAndView.addObject("logList", allOperationLog);
     modelAndView.addObject("currentAdmin", currentAdmin);
     return modelAndView;
+  }
+
+  @PostMapping("/admin/getAdminProfile")
+  @ResponseBody
+  public CommonResult getAdminProfile(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
+                                      @RequestParam(value = "limit", defaultValue = "5") Integer pageSize,
+                                      HttpSession session) {
+    User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
+    // 获取当前用户的所有日志列表
+    PageInfo page = operationLogService.findAllOperationLog(pageNum, pageSize, currentAdmin.getId());
+    return CommonResult.success(page);
   }
 
   /**
@@ -194,8 +201,14 @@ public class AdminController {
     return CommonResult.success();
   }
 
+  /**
+   * 根据用户id更改指定用户的状态
+   * @param id
+   * @return
+   */
   @GetMapping("/admin/changeUserStatus/{id}")
   @ResponseBody
+  @OperationLogAnnotation(operationModel = "用户模块",operationType = "更新",operationDesc = "修改用户状态")
   public CommonResult ChangeUserStatusById(@PathVariable("id") String id){
     Integer count = userService.changeStatus(Integer.valueOf(id));
     if (count == 0){
@@ -229,6 +242,16 @@ public class AdminController {
   public CommonResult selectUserById(@RequestParam("id") Integer userId){
     User user = userService.getUser(userId);
     return CommonResult.success(user);
+  }
+
+  /**
+   * 日志页面图数据
+   */
+  @PostMapping("/admin/logEchart")
+  @ResponseBody
+  public CommonResult getLogsEchart(@RequestParam("id") Integer userId){
+    Map map = operationLogService.selectLogsEchart(userId);
+    return CommonResult.success(map);
   }
 
 

@@ -64,6 +64,29 @@ public class EvaluationServiceImpl implements EvaluationService {
         return count;
     }
 
+
+    /**
+     * 查询评论启用状态
+     * @return
+     */
+    @Override
+    public Map selectEvaStatus(){
+        Map<String,Integer> res = new HashMap();
+        List<Evaluation> evas = evaluationMapper.selectAllEvaluations();
+        int[] count = {0,0};
+
+        for(Evaluation evaluation:evas){
+            if (Integer.valueOf(evaluation.getState())==1){
+                count[0] +=1;
+            }else if (Integer.valueOf(evaluation.getState())==0){
+                count[1] +=1;
+            }
+        }
+        res.put("启用",count[0]);
+        res.put("未启用",count[1]);
+        return res;
+    }
+
     /**
      * 查询最近的10条评论
      * @return
@@ -124,4 +147,6 @@ public class EvaluationServiceImpl implements EvaluationService {
         List<Evaluation> evaluations = evaluationMapper.selectAllFoodInfo();
         return evaluations;
     }
+
+
 }

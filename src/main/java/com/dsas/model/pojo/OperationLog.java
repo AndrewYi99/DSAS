@@ -8,6 +8,7 @@ import java.util.Date;
 public class OperationLog {
     private Integer id;
     private Integer userId;
+    private String username;
     private String ip;
     private String type;
     private String description;
@@ -82,11 +83,20 @@ public class OperationLog {
         this.result = result;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     public String toString() {
         return "OperationLog{" +
                 "id=" + id +
                 ", userId=" + userId +
+                ", username='" + username + '\'' +
                 ", ip='" + ip + '\'' +
                 ", type='" + type + '\'' +
                 ", description='" + description + '\'' +

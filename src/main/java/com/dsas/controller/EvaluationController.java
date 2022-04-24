@@ -86,5 +86,23 @@ public class EvaluationController {
         return CommonResult.success(evaluations);
     }
 
+    /**
+     * 查询评论启用与未启用的状态
+     * @return
+     */
+    @PostMapping("/admin/EvaluationEcharts4")
+    @ResponseBody
+    public CommonResult selectEvaState(){
+        Map map = evaluationService.selectEvaStatus();
+        return CommonResult.success(map);
+    }
+
+    @PostMapping("/admin/EvalautionEcharts5")
+    @ResponseBody
+    public CommonResult getEvaCount(){
+        Map map = evaluationService.selectMapFoodEva();
+        return CommonResult.success(map);
+    }
+
 
 }

@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="chart-title">
-                                <h4>菜品启用状态</h4>
+                                <h5>菜品启用状态</h5>
                             </div>
                             <div id="food_status" style="width: 100%;height: 200px;display: block"></div>
                         </div>
@@ -47,13 +47,13 @@
 </div>
 <div class="sidebar-overlay" data-reff=""></div>
 <#include "footer.ftl">
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-    </div>
-</script>
+<#--<script type="text/html" id="toolbarDemo">-->
+<#--    <div class="layui-btn-container">-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
+<#--    </div>-->
+<#--</script>-->
 <script type="text/html" id="editBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit" style="color: white;">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
@@ -352,12 +352,14 @@
                 trigger: 'item'
             },
             legend: {
-                top: '5%',
-                left: 'center'
+                top: '0%',
+                orient: 'vertical',
+                x:'left',
+                y:'center',
             },
             series: [
                 {
-                    name: 'Access From',
+                    name: '菜品所属组',
                     type: 'pie',
                     radius: ['40%', '70%'],
                     avoidLabelOverlap: false,
@@ -423,7 +425,7 @@
             ],
             series: [
                 {
-                    name: 'Direct',
+                    name: '平均分',
                     type: 'bar',
                     barWidth: '60%',
                     data: values,

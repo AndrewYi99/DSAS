@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.dsas.model.pojo.OperationLog">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="username" javaType="STRING" property="username"/>
         <result column="ip" jdbcType="VARCHAR" property="ip"/>
         <result column="type" jdbcType="VARCHAR" property="type"/>
         <result column="description" jdbcType="VARCHAR" property="description"/>
@@ -17,13 +18,23 @@
     <!--当对应的实体类属性和表中字段不一致，需要利用resultMap来添加映射，把数据库表属性和实体类字段进行绑定-->
     <!--使用resultType = "pojo" 会导致operationTime为空-->
     <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
-        select
-        <include refid="Base_Column_List"/>
-        from dsas_operationLog where user_id = #{userId,jdbcType=INTEGER}
+        select du.username,
+               do.id,
+               do.ip,
+               do.type,
+               do.description,
+               do.model,
+               do.operation_time,
+               do.result
+        from dsas_operationLog as do , dsas_user as du where do.user_id = du.id and do.user_id = #{userId,jdbcType=INTEGER}
     </select>
     <insert id="save" parameterType="com.dsas.model.pojo.OperationLog">
         insert into dsas_operationLog(id, user_id, ip, `type`, description, model, operation_time, `result`) value ( #{id,jdbcType=INTEGER},#{userId,jdbcType=INTEGER},#{ip,jdbcType=VARCHAR},#{type,jdbcType=VARCHAR},
             #{description,jdbcType=VARCHAR},#{model,jdbcType=VARCHAR},#{operationTime,jdbcType=TIMESTAMP},#{result,jdbcType=VARCHAR}
             )
     </insert>
+
+    <select id="selectCountByTime" resultType="Integer">
+        select count(operation_time) from dsas_operationLog where 1=1 and DATE_FORMAT(operation_time, '%Y-%m-%d') = DATE_FORMAT(#{operationTime},'%Y-%m-%d')
+    </select>
 </mapper>

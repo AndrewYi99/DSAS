@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="chart-title">
-                                <h4>用户分布</h4>
+                                <h5>用户分布</h5>
                             </div>
                             <div id="users" style="width: 100%;height: 200px;display: block"></div>
                         </div>
@@ -46,13 +46,13 @@
 </div>
 <div class="sidebar-overlay" data-reff=""></div>
 <#include "footer.ftl">
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-    </div>
-</script>
+<#--<script type="text/html" id="toolbarDemo">-->
+<#--    <div class="layui-btn-container">-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
+<#--    </div>-->
+<#--</script>-->
 <script type="text/html" id="editBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit" style="color: white;">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
@@ -307,11 +307,14 @@
     let values1 = new Array();
 
     $(document).ready(function () {
+
         $.ajax({
             url:"/admin/UsersEcharts",
+            async: false,
             type: "POST",
             dataType: "json",
             success: function (res) {
+                echartsUserData = [];
                 for (let key in res.data) {
                     echartsUserData.push(
                         {
@@ -340,7 +343,10 @@
 
             }
         })
+
     })
+
+
 
     function echart_users(data) {
         let myChart = echarts.init(document.getElementById('users'));
@@ -349,12 +355,14 @@
                 trigger: 'item'
             },
             legend: {
-                top: '5%',
-                left: 'center'
+                top: '0%',
+                orient: 'vertical',
+                x:'left',
+                y:'center',
             },
             series: [
                 {
-                    name: 'Access From',
+                    name: '所属用户组',
                     type: 'pie',
                     radius: ['40%', '70%'],
                     avoidLabelOverlap: false,
@@ -381,6 +389,7 @@
                 }
             ]
         };
+        myChart.clear();
         myChart.setOption(option);
         $(window).resize(function () {
             myChart.resize();
@@ -417,7 +426,7 @@
             ],
             series: [
                 {
-                    name: 'Direct',
+                    name: '登录次数',
                     type: 'bar',
                     barWidth: '60%',
                     data: values,
@@ -436,6 +445,7 @@
                 }
             ]
         };
+        myChart.clear();
         myChart.setOption(option);
         $(window).resize(function () {
             myChart.resize();

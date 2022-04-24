@@ -4,18 +4,21 @@
 <#--引入统一头部-->
 <#include "header.ftl">
 <style>
-    #headImg {
+    #headImg{
         width: 35px;
         height: 35px;
         border-radius: 50%;
         border: 3px solid #eee;
+    }
+    .profile-img{
+        height: 150px;
+        width: 150px;
     }
 </style>
 <body>
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
-    <#--左边侧边栏-->
     <#--侧边栏-->
     <#include "sidebar.ftl">
     <#--页面主体-->
@@ -35,40 +38,27 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="profile-view">
-                            <div class="profile-img-wrap">
-                                <div class="profile-img">
-                                    <a href="#"><img class="avatar" src="${currentAdmin.avatar}" alt=""></a>
-                                </div>
-                            </div>
                             <#--个人基本信息-->
                             <div class="profile-basic">
                                 <div class="row">
-                                    <div class="col-md-5">
+                                    <div class="col-md-3">
                                         <div class="profile-info-left">
+                                            <img src="${currentAdmin.avatar}" width="150px" height="150px">
                                             <h3 class="user-name m-t-0 mb-0">${currentAdmin.username}</h3>
                                             <div class="staff-id">注册时间:<br>
                                                 ${currentAdmin.createTime?string("yyyy-MM-dd HH:MM:ss")}
                                             </div>
-                                            <div class="staff-msg"><a href="chat.html" class="btn btn-primary">Send
-                                                    Message</a></div>
                                         </div>
                                     </div>
-                                    <div class="col-md-7">
-                                        <ul class="personal-info">
-                                            <li>
-                                                <span class="title">电话:</span>
-                                                <span class="text"><a href="">770-889-6484</a></span>
-                                            </li>
-                                            <li>
-                                                <span class="title">邮箱:</span>
-                                                <span class="text"><a href=""><span class="__cf_email__"
-                                                                                    data-cfemail="97f4e5fee4e3fef9f6f0e5f8e1f2e4d7f2eff6fae7fbf2b9f4f8fa">${currentAdmin.email}</span></a></span>
-                                            </li>
-                                            <li>
-                                                <span class="title">性别:</span>
-                                                <span class="text">Female</span>
-                                            </li>
-                                        </ul>
+                                    <div class="col-md-9">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="chart-title">
+                                                    <h5>操作记录</h5>
+                                                </div>
+                                                <div id="logs" style="width: 100%;height: 200px;display: block"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -76,258 +66,19 @@
                     </div>
                 </div>
             </div>
-            <div class="profile-tabs">
+            <div class="profile-tabs" style="margin-top: 10px">
                 <ul class="nav nav-tabs nav-tabs-bottom">
                     <li class="nav-item"><a class="nav-link active" href="#about-cont" data-toggle="tab">操作日志</a></li>
-                    <#--						<li class="nav-item"><a class="nav-link" href="#bottom-tab2" data-toggle="tab">Profile</a></li>-->
-                    <#--						<li class="nav-item"><a class="nav-link" href="#bottom-tab3" data-toggle="tab">Messages</a></li>-->
                 </ul>
 
                 <div class="tab-content">
                     <div class="tab-pane show active" id="about-cont">
                         <div class="row">
                             <div class="col-md-12">
-                                <#list logList as logs>
-                                    <div class="card-box">
-                                        <h3 class="card-title">${logs.type}操作</h3>
-                                        <div class="experience-box">
-
-                                            <ul class="experience-list">
-
-                                                <li>
-                                                    <div class="experience-user">
-                                                        <div class="before-circle"></div>
-                                                    </div>
-                                                    <div class="experience-content">
-                                                        <div class="timeline-content">
-                                                            <a href="#/" class="name">操作模块：${logs.model}</a>
-                                                            <div style="color: lightskyblue">
-                                                                操作描述：${logs.description}</div>
-                                                            <div class="text-red">操作地址：${logs.ip}</div>
-                                                            <div class="text-success">操作结果：${logs.result}</div>
-                                                            <div class="text-warning">
-                                                                操作时间：${logs.getOperationTime()?datetime}</div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-
-                                        </div>
-                                    </div>
-                                </#list>
-
+                                <table class="layui-hide" id="table_log" lay-filter="table_log"></table>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="notification-box">
-            <div class="msg-sidebar notifications msg-noti">
-                <div class="topnav-dropdown-header">
-                    <span>Messages</span>
-                </div>
-                <div class="drop-scroll msg-list-scroll" id="msg_list">
-                    <ul class="list-box">
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">R</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Richard Miles </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item new-message">
-                                    <div class="list-left">
-                                        <span class="avatar">J</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">John Doe</span>
-                                        <span class="message-time">1 Aug</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">T</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Tarah Shropshire </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">M</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Mike Litorus</span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">C</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Catherine Manseau </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">D</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Domenic Houston </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">B</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Buster Wigton </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">R</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Rolland Webber </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">C</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author"> Claire Mapes </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">M</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Melita Faucher</span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">J</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Jeffery Lalor</span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">L</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Loren Gatlin</span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">T</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Tarah Shropshire</span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="topnav-dropdown-footer">
-                    <a href="chat.html">See all messages</a>
                 </div>
             </div>
         </div>
@@ -335,6 +86,132 @@
 </div>
 <#--引入统一底部-->
 <#include "footer.ftl">
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
 
+        table.render({
+            elem: '#table_log'
+            ,url:'/admin/getAdminProfile'
+            ,method:'POST'
+            ,toolbar: true
+            ,title: '管理员操作日志表'
+            ,totalRow: true
+            ,cols: [[
+                {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计行'}
+                ,{field:'username', title:'用户名', width:120}
+                ,{field:'ip', title:'Ip地址', width:150}
+                ,{field:'type', title:'操作类型', width:100, sort: true}
+                ,{field:'description', title:'操作描述', width:80}
+                ,{field:'model', title:'操作模块', width:100, sort: true}
+                ,{field:'operationTime', title:'操作时间'}
+                ,{field:'result', title:'操作结果', width:100}
+            ]]
+            ,page: true
+            ,response: {
+                statusCode: 10000 //重新规定成功的状态码为 200，table 组件默认为 0
+            },
+            parseData:function (res){
+                // console.log(res.status)
+                // console.log(res.msg)
+                // console.log(res.data.total)
+                // console.log(res.data.list)
+                return{
+                    "code":res.status,
+                    "data":res.data.list,
+                    "count":res.data.total
+                };
+            }
+        });
+    });
+
+</script>
+<script>
+    let userId = ${currentAdmin.id}
+    let keys1 = new Array();
+    let values1 = new Array();
+
+    $(document).ready(function () {
+        $.ajax({
+            url:"/admin/logEchart",
+            type: "POST",
+            dataType: "json",
+            data:{
+                id:userId
+            },
+            success: function (res) {
+                for (let key in res.data) {
+                    keys1.push(key)
+                    values1.push(res.data[key])
+                }
+                if (res.status == 10000) {
+                    echart_logs(keys1, values1)
+                }
+            }
+        })
+    })
+
+    function echart_logs(keys, values) {
+        let myChart = echarts.init(document.getElementById('logs'));
+        let option = {
+            // Make gradient line here
+            visualMap: [
+                {
+                    show: true,
+                    type: 'continuous',
+                    seriesIndex: 0,
+                    min: 0,
+                    max: 100,
+                    orient: 'horizontal',
+                    top:-10,
+                    left:'center',
+                    calculable:true,                        //是否显示拖拽用的手柄（手柄能拖拽调整选中范围）
+                    realtime:true,
+                    itemWidth:20,                           //图形的宽度，即长条的宽度。
+                    itemHeight:100,
+                    text:['High', 'Low'],
+                }
+            ],
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: [
+                {
+                    data: keys,
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                },
+
+            ],
+            grid: [
+                {
+                    left: '0%',
+                    right: '0%',
+                    bottom: '0%',
+                    top: '10%',
+                    containLabel: true
+                }
+            ],
+            series: [
+                {
+                    type: 'line',
+                    showSymbol: true,
+                    data: values,
+                    smooth: true
+                }
+            ]
+        };
+        myChart.setOption(option);
+        $(window).resize(function () {
+            myChart.resize();
+        })
+    }
+</script>
 </body>
 </html>

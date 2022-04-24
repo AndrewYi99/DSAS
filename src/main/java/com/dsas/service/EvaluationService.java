@@ -13,6 +13,8 @@ public interface EvaluationService {
 
     Integer changeEvaluationState(Integer valueOf);
 
+    Map selectEvaStatus();
+
     List<Evaluation> selectRecentEvaluation();
 
     Map selectMapEvaInfo();
