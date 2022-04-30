@@ -1,10 +1,11 @@
 package com.dsas.model.response;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 //首页信息响应对象
-public class ResponseIndexInfo {
+public class ResponseIndexInfo implements Serializable {
     private Integer totalUsers;
     private Integer totalEvaluations;
     private Integer totalFoods;

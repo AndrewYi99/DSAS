@@ -3,9 +3,10 @@ package com.dsas.model.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Food {
+public class Food implements Serializable {
   private Integer id;
   private String foodName;
   private String foodDescription;

@@ -16,8 +16,7 @@ import com.dsas.service.UserService;
 import com.dsas.util.VerifyCodeUtil;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
-import org.apache.ibatis.annotations.Param;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -136,6 +135,7 @@ public class AdminController {
 
   @PostMapping("/admin/getAdminProfile")
   @ResponseBody
+  @Cacheable(value = "getAdminProfile")
   public CommonResult getAdminProfile(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
                                       @RequestParam(value = "limit", defaultValue = "5") Integer pageSize,
                                       HttpSession session) {
@@ -249,6 +249,7 @@ public class AdminController {
    */
   @PostMapping("/admin/logEchart")
   @ResponseBody
+  @Cacheable(value = "getLogsEchart")
   public CommonResult getLogsEchart(@RequestParam("id") Integer userId){
     Map map = operationLogService.selectLogsEchart(userId);
     return CommonResult.success(map);

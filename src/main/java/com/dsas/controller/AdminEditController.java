@@ -43,6 +43,23 @@ public class AdminEditController {
     }
 
     /**
+     * 更新管理员信息
+     *
+     * @param
+     * @return 返回更新后的用户
+     */
+    @PostMapping("/admin/updateAdmin")
+    @ResponseBody
+    @ApiOperation("更新用户数据")
+    public CommonResult updateAdminInfo(
+            @RequestBody @Valid CommUserRequest commUserRequest,HttpSession session) {
+        // 更新用户
+        userService.updateInfo(commUserRequest);
+        session.removeAttribute(Constant.DSAS_ADMIN);
+        return CommonResult.success();
+    }
+
+    /**
      * 更新用户信息
      *
      * @param

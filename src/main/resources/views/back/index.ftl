@@ -12,11 +12,11 @@
     #visited, #comment,#score,#Funnel {
         display: block;
         width: 100%;
-        height: 300px;
+        height: 350px;
     }
 
 </style>
-<body>
+<body class="mini-sidebar">
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
@@ -72,10 +72,6 @@
                 <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="chart-title">
-                                <h4>用户活跃统计</h4>
-                                <#--<span class="float-right"><i class="fa fa-caret-up" aria-hidden="true"></i> 15% Higher than Last Month</span>-->
-                            </div>
                             <div id="visited"></div>
                         </div>
                     </div>
@@ -83,19 +79,13 @@
                 <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="chart-title">
-                                <h4>评价统计</h4>
-                            </div>
-                            <div id="comment"></div>
+                            <div id="comment"  style="height: 350px" ></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="chart-title">
-                                <h4>菜品评分统计</h4>
-                            </div>
                             <div id="score"></div>
                         </div>
                     </div>
@@ -103,47 +93,10 @@
                 <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="chart-title">
-                                <h4>评论分布</h4>
-                            </div>
+
                             <div id="Funnel"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <#--列表信息1-->
-            <div class="row">
-
-            </div>
-
-        </div>
-        <#--信息侧边栏-->
-        <div class="notification-box">
-            <div class="msg-sidebar notifications msg-noti">
-                <div class="topnav-dropdown-header">
-                    <span>Messages</span>
-                </div>
-                <div class="drop-scroll msg-list-scroll" id="msg_list">
-                    <ul class="list-box">
-                        <li>
-                            <a href="chat.html">
-                                <div class="list-item">
-                                    <div class="list-left">
-                                        <span class="avatar">R</span>
-                                    </div>
-                                    <div class="list-body">
-                                        <span class="message-author">Richard Miles </span>
-                                        <span class="message-time">12:28 AM</span>
-                                        <div class="clearfix"></div>
-                                        <span class="message-content">Lorem ipsum dolor sit amet, consectetur adipiscing</span>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="topnav-dropdown-footer">
-                    <a href="chat.html">See all messages</a>
                 </div>
             </div>
         </div>
@@ -158,9 +111,7 @@
     let values1 = new Array();
     let echarts2Data = new Array();
     let echarts3Data = new Array();
-
-    let keys2 = new Array();
-    let values2 = new Array();
+    let echarts4Data = new Array();
 
     $(document).ready(function () {
         $.ajax({
@@ -218,17 +169,29 @@
                     echarts3Data.push([
                         res.data[i].foodName,res.data[i].avgScore.toFixed(2),res.data[i].totalCommentUser
                     ])
-                    keys2.push(res.data[i].foodName)
-                    values2.push({
-                        value:res.data[i].totalCommentUser,name:res.data[i].foodName
-                    })
                 }
                 console.log(echarts3Data)
                 // console.log(keys);
                 // console.log(valus);
                 if (res.status == 10000) {
                     echart03(echarts3Data)
-                    echart04(keys2,values2)
+                }
+            }
+        })
+
+        $.ajax({
+            url:"/front/showFrontEcharts1",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                for (let key in res.data){
+                    echarts4Data.push({
+                        value:res.data[key],name:key
+                    })
+                }
+
+                if (res.status == 10000) {
+                    echart04(echarts4Data)
                 }
             }
         })
@@ -238,7 +201,21 @@
     function echart01(keys, values) {
         let myChart = echarts.init(document.getElementById('visited'));
         let option = {
-            // Make gradient line here
+            title:{
+                text:'用户活跃统计',
+                textStyle:{
+                    //文字颜色
+                    color:'#343a40',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle:'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight:'bold',
+                    //字体系列
+                    fontFamily:'sans-serif',
+                    //字体大小
+                    fontSize:18
+                }
+            },
             visualMap: [
                 {
                     show: true,
@@ -254,6 +231,9 @@
                     itemWidth:20,                           //图形的宽度，即长条的宽度。
                     itemHeight:100,
                     text:['High', 'Low'],
+                    inRange: {
+                        color: ['#2DBE31','#BF4D40','#6F3125'] // 渐变颜色
+                    }
                 }
             ],
             tooltip: {
@@ -300,12 +280,27 @@
     function echart02(data) {
         let myChart = echarts.init(document.getElementById('comment'));
         let option = {
+            title:{
+                text:'评论分布',
+                textStyle:{
+                    //文字颜色
+                    color:'#343a40',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle:'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight:'bold',
+                    //字体系列
+                    fontFamily:'sans-serif',
+                    //字体大小
+                    fontSize:18
+                }
+            },
             tooltip: {
                 trigger: 'item'
             },
             legend: {
                 orient: 'vertical',
-                left: 'left'
+                left: 'right'
             },
             grid: {
                 left: '0%',
@@ -339,6 +334,22 @@
     function echart03(data){
         let myChart = echarts.init(document.getElementById('score'));
         let option = {
+            title:{
+                text:'菜品评分统计',
+                textStyle:{
+                    //文字颜色
+                    color:'#343a40',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle:'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight:'bold',
+                    //字体系列
+                    fontFamily:'sans-serif',
+                    //字体大小
+                    fontSize:18
+                },
+
+            },
             dataset: [
                 {
                     dimensions: ['foodName', 'avgScore', 'totalCommentUser'],
@@ -359,6 +370,13 @@
                 },
             },
             yAxis: {},
+            grid: {
+                left: '0%',
+                right: '0%',
+                bottom: '0%',
+                top: '15%',
+                containLabel: true
+            },
             series: {
                 type: 'bar',
                 encode: { x: 'foodName', y: 'avgScore' },
@@ -384,57 +402,70 @@
         })
     }
 
-    function echart04(keys,values){
+    function echart04(data){
         let myChart = echarts.init(document.getElementById('Funnel'));
         let option = {
-            tooltip: {
-                trigger: 'item',
-                formatter: '{a} <br/>{b} : {c}次'
-            },grid: {
-                left: '0%',
-                right: '0%',
-                bottom: '0%',
-                top: '10%',
-                containLabel: true
+            title:{
+                text:'热门菜品分布',
+                textStyle:{
+                    //文字颜色
+                    color:'#343a40',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle:'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight:'bold',
+                    //字体系列
+                    fontFamily:'sans-serif',
+                    //字体大小
+                    fontSize:18
+                }
             },
             legend: {
-                data: keys
+                top: 'bottom'
             },
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            grid: [
+                {
+                    left: '0%',
+                    right: '0%',
+                    bottom: '0%',
+                    top: '0%',
+                    containLabel: true
+                }
+            ],
             series: [
                 {
-                    name: 'Funnel',
-                    type: 'funnel',
-                    left: '10%',
-                    top: 50,
-                    bottom: 0,
-                    width: '80%',
-                    min: 0,
-                    max: 30,
-                    minSize: '1%',
-                    maxSize: '100%',
-                    sort: 'descending',
-                    gap: 2,
-                    label: {
-                        show: true,
-                        position: 'inside'
-                    },
-                    labelLine: {
-                        length: 10,
-                        lineStyle: {
-                            width: 1,
-                            type: 'solid'
-                        }
-                    },
+                    name: 'Nightingale Chart',
+                    type: 'pie',
+                    radius: [40, 100],
+                    center: ['50%', '50%'],
+                    roseType: 'area',
+                    //显示数值
                     itemStyle: {
-                        borderColor: '#fff',
-                        borderWidth: 1
-                    },
-                    emphasis: {
-                        label: {
-                            fontSize: 20
+                        show:true,
+                        borderRadius: 8,
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        },
+                        normal:{
+                            label:{
+                                show: true,
+                                formatter: '{b} : {c}次 ({d}%)'
+                            },
+                            labelLine :{show:true}
                         }
                     },
-                    data: values
+                    data: data
                 }
             ]
         };
@@ -443,7 +474,6 @@
             myChart.resize();
         })
     }
-
     /*日期格式化函数*/
     Date.prototype.format = function (fmt) {
         let o = {

@@ -2,7 +2,7 @@
 <html lang="en">
 <#include "header.ftl">
 
-<body>
+<body class="mini-sidebar">
     <div class="main-wrapper">
         <#--顶部状态栏-->
         <#include "header_bar.ftl">

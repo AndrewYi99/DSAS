@@ -2,8 +2,10 @@ package com.dsas.common;
 
 import com.dsas.exception.DSASExceptionEnum;
 
+import java.io.Serializable;
+
 /** 通用返回对象 */
-public class CommonResult<T> {
+public class CommonResult<T> implements Serializable {
   // 状态码
   private Integer status;
   private String msg;

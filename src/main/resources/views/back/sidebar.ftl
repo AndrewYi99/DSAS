@@ -41,7 +41,7 @@
     // element.addEventListener('click',function () {
     //     alert("test")
     // })
-
+    //
     // $(function() {
     //     $("#sidebar-menu ul li").bind("click", function() {
     //         console.log(this)

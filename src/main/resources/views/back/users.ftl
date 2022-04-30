@@ -3,7 +3,7 @@
 
 <#include "header.ftl">
 
-<body>
+<body class="mini-sidebar">
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
@@ -116,10 +116,11 @@
         var table = layui.table;
         var form = layui.form;
 
-        table.render({
+        let userTable = table.render({
             elem: '#eva_table',
             url:'/admin/usersData',
             method:'post',
+            cellMinWidth: 120,//指定最小宽度，自适应
             parseData:function (res){
                 // console.log(res.status)
                 // console.log(res.msg)
@@ -136,10 +137,10 @@
            cols: [[
                 {type: 'checkbox', fixed: 'left'}
                 ,{field:'id',title:'id', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
-                ,{field:'username', title:'用户名称', width:120,sort: true}
-                ,{field:'nickname', title:'用户昵称', width:120, sort: true}
-                ,{field:'email', title:'邮箱地址', width:120, }
-                ,{field:'role', title:'用户角色',sort: true, width:150,templet: function(res){
+                ,{field:'username', title:'用户名称',sort: true}
+                ,{field:'nickname', title:'用户昵称', sort: true}
+                ,{field:'email', title:'邮箱地址' }
+                ,{field:'role', title:'用户角色',sort: true,templet: function(res){
                     if (res.role==1){
                         return '<b class="text-success">普通用户</b>'
                     }else if (res.role == 2){
@@ -148,18 +149,18 @@
                         return '<b class="text-danger">超级管理员</b>'
                     }
                 }}
-               ,{field:'status',sort: true, title:'状态', width:100,templet: function(res){
+               ,{field:'status',sort: true, title:'状态',templet: function(res){
                        if (res.status=="1"){
                            return '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="disable" style="color: white;">'+"启用中"+'</a>'
-                       }else if (res.status == "0"){
+                       }else if (res.status =="0"){
                            return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="enable" style="color: white;">'+"停用中"+'</a>'
                        }
 
                    }}
-                ,{field:'createTime',sort: true, title:'加入时间', width:120}
-                ,{field:'updateTime',sort: true, title:'修改时间', width:120}
-                ,{field:'loginTime',sort: true, title:'最近时间', width:120}
-                ,{fixed: 'right', title:'操作', toolbar: '#editBar', width:120}
+                ,{field:'createTime',sort: true, title:'加入时间'}
+                ,{field:'updateTime',sort: true, title:'修改时间'}
+                ,{field:'loginTime',sort: true, title:'最近时间'}
+                ,{fixed: 'right', title:'操作', toolbar: '#editBar'}
             ]]
             ,page: true
         });
@@ -194,11 +195,11 @@
                     $.get("/admin/deleteUser/"+data.id, {}, function (json) {
                         if(json.code=="10000"){
                             //删除成功刷新表格
-                            table.reload('eva_table');
                             //提示操作成功
                             layui.layer.msg('数据操作成功,用户列表已刷新');
                             //关闭对话框
                             layui.layer.close(index);
+                            userTable.reload({url:'/admin/usersData'})
                         }else{
                             //处理失败,提示错误信息
                             layui.layer.msg(json.msg);
@@ -231,6 +232,7 @@
                     //确认按钮后发送ajax请求,传入评论编号
                     $.get("/admin/changeUserStatus/"+data.id, {}, function (json) {
                         if(json.code=="10000"){
+                            table.reload('eva_table');
                             //删除成功刷新表格
                             //提示操作成功
                             layui.layer.msg('数据操作成功,用户列表已刷新');
@@ -240,12 +242,12 @@
                             //处理失败,提示错误信息
                             layui.layer.msg(json.msg);
                         }
-                        table.reload('eva_table');
+
                     }, "json");
                     layer.close(index);
-
+                    //userTable.reload({url:'/admin/usersData'})
+                   window.parent.location.reload();
                 });
-
             }else if(obj.event == 'enable') {
                 layer.confirm('真启用吗', function (index) {
                     console.log(data)
@@ -257,14 +259,17 @@
                             layui.layer.msg('数据操作成功,用户列表已刷新');
                             //关闭对话框
                             layui.layer.close(index);
+
                         } else {
                             //处理失败,提示错误信息
                             layui.layer.msg(json.msg);
                         }
-                        table.reload('eva_table');
+                        //table.reload('eva_table');
+                        //location.reload();
                     }, "json");
                     layer.close(index);
-
+                    window.parent.location.reload();
+                    //userTable.reload({url:'/admin/usersData'})
                 });
             }
             //提交编辑更新

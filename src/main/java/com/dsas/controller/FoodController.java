@@ -11,6 +11,7 @@ import com.dsas.service.UserService;
 import com.dsas.service.impl.EvaluationServiceImpl;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -81,6 +82,7 @@ public class FoodController {
      */
     @PostMapping("/admin/foodUpdate")
     @ResponseBody
+    @Transactional(rollbackFor = Exception.class)
     public CommonResult updateFoodInfo(@RequestBody Food food){
         Integer count = foodService.updateFood(food);
         if (count==0){

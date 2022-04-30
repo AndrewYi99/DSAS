@@ -3,7 +3,7 @@
 
 <#include "header.ftl">
 
-<body>
+<body class="mini-sidebar">
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
@@ -66,6 +66,7 @@
             elem: '#eva_table',
             url:'/admin/evaluationData',
             method:'post',
+            cellMinWidth: 120,//指定最小宽度，自适应
             parseData:function (res){
                 // console.log(res.status)
                 // console.log(res.msg)
@@ -81,12 +82,12 @@
             ,title: '用户数据表',
            cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                ,{field:'evaluationId',title:'id', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
-                ,{field:'userId', title:'用户id', width:120,sort: true, edit: 'text'}
-                ,{field:'userName', title:'用户名称', width:120,sort: true, edit: 'text'}
-                ,{field:'foodId', title:'菜品id', width:120, sort: true,edit: 'text'}
-                ,{field:'foodName', title:'菜品名称', width:120, sort: true,edit: 'text'}
-                ,{field:'evaluationCategory', title:'评论分类', width:150, edit: 'text',templet: function(res){
+                ,{field:'evaluationId',title:'id', fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
+                ,{field:'userId', title:'用户id', sort: true, edit: 'text'}
+                ,{field:'userName', title:'用户名称',sort: true, edit: 'text'}
+                ,{field:'foodId', title:'菜品id',  sort: true,edit: 'text'}
+                ,{field:'foodName', title:'菜品名称',  sort: true,edit: 'text'}
+                ,{field:'evaluationCategory', title:'评论分类', edit: 'text',templet: function(res){
                     if (res.evaluationCategory==1){
                         return '<b class="text-success">菜品建议</b>'
                     }else if (res.evaluationCategory == 2){
@@ -95,8 +96,8 @@
                         return '<b class="text-danger">其他建议</b>'
                     }
                 }}
-                ,{field:'content',sort: true, title:'具体内容', width:120}
-               ,{field:'state',sort: true, title:'状态', width:100,templet: function(res){
+                ,{field:'content',sort: true, title:'具体内容'}
+               ,{field:'state',sort: true, title:'状态', templet: function(res){
                        if (res.state=="1"){
                            return '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="disable" style="color: white;">'+"启用中"+'</a>'
                        }else if (res.state == "0"){
@@ -104,10 +105,10 @@
                        }
 
                    }}
-               ,{field:'likes',sort: true, title:'评分', width:120}
-                ,{field:'createTime',sort: true, title:'加入时间', width:120}
-                ,{field:'updateTime',sort: true, title:'修改时间', width:120}
-                ,{fixed: 'right', title:'操作', toolbar: '#editBar', width:120}
+               ,{field:'likes',sort: true, title:'评分'}
+                ,{field:'createTime',sort: true, title:'加入时间'}
+                ,{field:'updateTime',sort: true, title:'修改时间'}
+                ,{fixed: 'right', title:'操作', toolbar: '#editBar'}
             ]]
             ,page: true
         });

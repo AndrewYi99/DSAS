@@ -5,14 +5,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
-public class CommUserRequest {
+public class CommUserRequest implements Serializable {
     private Integer id;
     @Size(min = 3, max = 10)
     private String username;
 
-    @Min(6)
     private String password;
 
     @Size(min = 3, max = 10)

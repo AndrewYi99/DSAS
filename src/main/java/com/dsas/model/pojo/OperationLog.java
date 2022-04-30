@@ -3,9 +3,10 @@ package com.dsas.model.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class OperationLog {
+public class OperationLog implements Serializable {
     private Integer id;
     private Integer userId;
     private String username;

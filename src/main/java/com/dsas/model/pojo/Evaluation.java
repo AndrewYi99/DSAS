@@ -3,12 +3,13 @@ package com.dsas.model.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 评价实体类
  */
-public class Evaluation {
+public class Evaluation implements Serializable {
   private Integer evaluationId;
   private Integer userId;
   private String userName;

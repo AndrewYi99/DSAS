@@ -7,6 +7,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Properties;
@@ -15,6 +16,7 @@ import java.util.Properties;
 @SpringBootApplication
 @MapperScan("com.dsas.model.dao")
 @ImportAutoConfiguration(PageHelperAutoConfiguration.class)
+@EnableCaching
 public class DsasApplication {
 
   @Bean

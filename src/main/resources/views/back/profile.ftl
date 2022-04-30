@@ -15,7 +15,7 @@
         width: 150px;
     }
 </style>
-<body>
+<body class="mini-sidebar">
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
@@ -53,10 +53,7 @@
                                     <div class="col-md-9">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="chart-title">
-                                                    <h5>操作记录</h5>
-                                                </div>
-                                                <div id="logs" style="width: 100%;height: 200px;display: block"></div>
+                                                <div id="logs" style="width: 100%;height: 300px;display: block"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -96,16 +93,17 @@
             ,method:'POST'
             ,toolbar: true
             ,title: '管理员操作日志表'
-            ,totalRow: true
+            ,totalRow: true,
+            cellMinWidth: 120//指定最小宽度，自适应
             ,cols: [[
-                {field:'id', title:'ID', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计行'}
-                ,{field:'username', title:'用户名', width:120}
-                ,{field:'ip', title:'Ip地址', width:150}
-                ,{field:'type', title:'操作类型', width:100, sort: true}
-                ,{field:'description', title:'操作描述', width:80}
-                ,{field:'model', title:'操作模块', width:100, sort: true}
+                {field:'id', title:'ID', fixed: 'left', unresize: true, sort: true, totalRowText: '合计行'}
+                ,{field:'username', title:'用户名'}
+                ,{field:'ip', title:'Ip地址'}
+                ,{field:'type', title:'操作类型', sort: true}
+                ,{field:'description', title:'操作描述'}
+                ,{field:'model', title:'操作模块', sort: true}
                 ,{field:'operationTime', title:'操作时间'}
-                ,{field:'result', title:'操作结果', width:100}
+                ,{field:'result', title:'操作结果'}
             ]]
             ,page: true
             ,response: {
@@ -154,7 +152,21 @@
     function echart_logs(keys, values) {
         let myChart = echarts.init(document.getElementById('logs'));
         let option = {
-            // Make gradient line here
+            title:{
+                text:'操作记录',
+                textStyle:{
+                    //文字颜色
+                    color:'#343a40',
+                    //字体风格,'normal','italic','oblique'
+                    fontStyle:'normal',
+                    //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
+                    fontWeight:'bold',
+                    //字体系列
+                    fontFamily:'sans-serif',
+                    //字体大小
+                    fontSize:18
+                }
+            },
             visualMap: [
                 {
                     show: true,
@@ -170,6 +182,9 @@
                     itemWidth:20,                           //图形的宽度，即长条的宽度。
                     itemHeight:100,
                     text:['High', 'Low'],
+                    inRange: {
+                        color: ['#2DBE31','#BF4D40','#6F3125'] // 渐变颜色
+                    }
                 }
             ],
             tooltip: {

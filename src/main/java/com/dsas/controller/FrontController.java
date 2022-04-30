@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springfox.documentation.annotations.Cacheable;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -36,6 +37,7 @@ public class FrontController {
     @PostMapping("/showFrontEcharts1")
     @CrossOrigin
     @ResponseBody
+    @Cacheable(value = "showFrontEcharts1")
     public CommonResult showFrontEcharts1(){
         Map map = evaluationService.selectMapFoodEva();
         return CommonResult.success(map);
@@ -48,6 +50,7 @@ public class FrontController {
     @PostMapping("/showFrontEcharts2")
     @CrossOrigin
     @ResponseBody
+    @Cacheable(value = "showFrontEcharts2")
     public CommonResult showFrontEcharts2(){
         List<Evaluation> evaluations = evaluationService.selectAllEvaluationAvg();
         return CommonResult.success(evaluations);
@@ -60,6 +63,7 @@ public class FrontController {
     @PostMapping("/showFrontEcharts3")
     @CrossOrigin
     @ResponseBody
+    @Cacheable(value = "showFrontEcharts2")
     public CommonResult showFrontEcharts3(){
         Map dateCountMap = userService.selectIndexInfos();
         if (dateCountMap.isEmpty()){

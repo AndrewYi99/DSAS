@@ -31,7 +31,7 @@ public class UserController {
     return "/front/login";
   }
 
-  @PostMapping("/register")
+  @PostMapping("/user/register")
   @ResponseBody
   @ApiOperation("用户注册")
   public CommonResult register(@RequestBody CommUserRequest commUserRequest) {

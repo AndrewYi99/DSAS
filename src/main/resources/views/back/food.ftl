@@ -3,7 +3,7 @@
 
 <#include "header.ftl">
 
-<body>
+<body class="mini-sidebar">
 <div class="main-wrapper">
     <#--顶部状态栏-->
     <#include "header_bar.ftl">
@@ -123,6 +123,7 @@
             elem: '#food_table',
             url:'/admin/foodData',
             method:'post',
+            cellMinWidth: 120,//指定最小宽度，自适应
             parseData:function (res){
                 // console.log(res.status)
                 // console.log(res.msg)
@@ -138,17 +139,17 @@
             ,title: '用户数据表',
            cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                ,{field:'id',title:'id', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
-                ,{field:'foodName', title:'菜品名称', width:120,sort: true}
-                ,{field:'foodDescription', title:'菜品描述', width:120, sort: true}
-                ,{field:'isRecommend', title:'是否为推荐菜品', width:150, templet: function(res){
+                ,{field:'id',title:'id', fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
+                ,{field:'foodName', title:'菜品名称',sort: true}
+                ,{field:'foodDescription', title:'菜品描述',sort: true}
+                ,{field:'isRecommend', title:'是否为推荐菜品', templet: function(res){
                     if (res.isRecommend==1){
                         return '<b class="text-success">是</b>'
                     }else if (res.isRecommend == 0){
                         return '<b class="text-danger">否</b>'
                     }
                 }}
-               ,{field:'status',sort: true, title:'状态', width:100,templet: function(res){
+               ,{field:'status',sort: true, title:'状态', templet: function(res){
                        if (res.status==1){
                            return '<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="disable" style="color: white;">'+"启用中"+'</a>'
                        }else if (res.status == 0){
@@ -156,16 +157,16 @@
                        }
 
                    }}
-               ,{field:'isTodayFood',sort: true, title:'是否为今日菜品', width:120, templet: function(res){
+               ,{field:'isTodayFood',sort: true, title:'是否为今日菜品', templet: function(res){
                        if (res.isTodayFood==1){
                            return '<b class="text-success">是</b>'
                        }else if (res.isTodayFood == 0){
                            return '<b class="text-danger">否</b>'
                        }
                    }}
-                ,{field:'createTime',sort: true, title:'加入时间', width:120}
-                ,{field:'updateTime',sort: true, title:'修改时间', width:120}
-                ,{fixed: 'right', title:'操作', toolbar: '#editBar', width:120}
+                ,{field:'createTime',sort: true, title:'加入时间'}
+                ,{field:'updateTime',sort: true, title:'修改时间'}
+                ,{fixed: 'right', title:'操作', toolbar: '#editBar'}
             ]]
             ,page: true
         });

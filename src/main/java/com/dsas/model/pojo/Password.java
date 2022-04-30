@@ -1,7 +1,9 @@
 package com.dsas.model.pojo;
 
+import java.io.Serializable;
+
 //密码对照表
-public class Password {
+public class Password implements Serializable {
     private Integer id;
     private String md5Str;
     private String originPwd;
