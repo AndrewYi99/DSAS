@@ -69,6 +69,13 @@
         select <include refid="Base_Column_List"/> from dsas_food
     </select>
 
+    <select id="selectFoodsByKeyword" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from dsas_food
+        where  1 = 1
+        <if test="keyword!=''">
+            and food_name like concat('%',#{keyword},'%')
+        </if>
+    </select>
 
     <delete id="delFoodById">
         delete from dsas_food where id = #{id,jdbcType=INTEGER}

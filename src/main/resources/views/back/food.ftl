@@ -47,13 +47,22 @@
 </div>
 <div class="sidebar-overlay" data-reff=""></div>
 <#include "footer.ftl">
-<#--<script type="text/html" id="toolbarDemo">-->
-<#--    <div class="layui-btn-container">-->
-<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
-<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>-->
-<#--        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
-<#--    </div>-->
-<#--</script>-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-inline">
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delAllSelect">删除选中</button>
+        <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="stopAllSelect">批量禁用</button>
+        <button class="layui-btn layui-btn-sm layui-btn-success" lay-event="startAllSelect">批量启用</button>
+    </div>
+    <div class="layui-inline">
+        <div class="layui-inline">
+            <input class="layui-input" type="text" placeholder="模糊搜索菜品名" autocomplete="off" name="keyword" id="keyword">
+        </div>
+        <button class="layui-btn" lay-submit="" lay-filer="searchFood" id="searchFood" data-type="reload">
+            <i class="layui-icon">&#xe615;</i>
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary" id="resetBtn" lay-event="reset">重置</button>
+    </div>
+</script>
 <script type="text/html" id="editBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit" style="color: white;">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
@@ -119,7 +128,7 @@
     layui.use('table', function(){
         var table = layui.table;
         var form = layui.form;
-        table.render({
+        let foodTable = table.render({
             elem: '#food_table',
             url:'/admin/foodData',
             method:'post',
@@ -174,17 +183,154 @@
         //工具栏事件
         table.on('toolbar(food_table)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
+            //用于存储待删除的菜品
+            let arrForDel = [];
+            //用于提示不能删除的菜品
+            let CantDel = [];
+            let arrForChange = [];
+            //存储不能修改状态的菜品
+            let CantChange = [];
             switch(obj.event){
-                case 'getCheckData':
-                    var data = checkStatus.data;
-                    layer.alert(JSON.stringify(data));
+                case 'reset':
+                    window.parent.location.reload();
                     break;
-                case 'getCheckLength':
-                    var data = checkStatus.data;
-                    layer.msg('选中了：'+ data.length + ' 个');
+                //批量删除
+                case 'delAllSelect':
+                    layer.confirm("确定删除选中菜品吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForDel.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==1){
+                                    CantDel.push(checkStatus.data[i].foodName)
+                                }
+                            }
+                            if (CantDel.length !=0){
+                                layer.alert("菜品："+CantDel+"处于启用状态,不能删除",{icon:5,title:'提示'})
+                                CantDel = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForDel.join(",");
+                            //待删除的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changFoodsByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"del"},
+                                success:function (res) {
+                                    arrForDel = [];
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功删除"+res.data+"条数据",{icon:6,title:'提示'})
+                                        //window.parent.location.reload();
+                                        foodTable.reload({url:'/admin/foodData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要删除的数据",{icon:0,title:'提示'})
+                        }
+                    });
                     break;
-                case 'isAll':
-                    layer.msg(checkStatus.isAll ? '全选': '未全选')
+                //批量禁用
+                case 'stopAllSelect':
+                    layer.confirm("确定禁用选中的菜品吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForChange.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==0){
+                                    //已经为禁用状态不能再进行禁用操作
+                                    CantChange.push(checkStatus.data[i].foodName)
+                                }
+                            }
+                            if (CantChange.length !=0){
+                                layer.alert("菜品："+CantChange+"已经禁用,不能再进行禁用操作",{icon:5,title:'提示'})
+                                CantChange = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForChange.join(",");
+                            //待禁用的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changFoodsByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"stop"},
+                                success:function (res) {
+                                    arrForChange = [];
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功禁用"+res.data+"条数据",{icon:6,title:'提示'},function () {
+                                            window.parent.location.reload();
+                                        })
+                                        //foodTable.reload({url:'/admin/foodData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要禁用的菜品",{icon:0,title:'提示'})
+                        }
+                    });
+                    break;
+                //批量启用
+                case 'startAllSelect':
+                    layer.confirm("确定启用选中的菜品吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForChange.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==1){
+                                    //已经为启用状态不能再进行启用操作
+                                    CantChange.push(checkStatus.data[i].foodName)
+                                }
+                            }
+                            if (CantChange.length !=0){
+                                layer.alert("菜品："+CantChange+"已经启用,不能再进行启用操作",{icon:5,title:'提示'})
+                                CantChange = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForChange.join(",");
+                            //待启用的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changFoodsByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"start"},
+                                success:function (res) {
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功启用"+res.data+"条数据",{icon:6,title:'提示'},function () {
+                                            window.parent.location.reload();
+                                        })
+                                        //foodTable.reload({url:'/admin/foodData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要启用的菜品",{icon:0,title:'提示'})
+                        }
+                    });
                     break;
             };
         });
@@ -296,7 +442,30 @@
                 })
             });
         });
-
+        //搜索功能
+        $('#searchFood').click(function () {
+            var keyword = $('#keyword').val();
+            console.log(keyword)
+            if($('#keyword').val()==""){
+                layer.msg('查询内容不能为空');
+                return false;
+            }
+            table.reload('food_table', {
+                url: '/admin/foodData',
+                methods:"post"
+                ,request: {
+                    pageName: 'page'
+                    ,limitName: 'limit'
+                }
+                ,where: {
+                    keyword: keyword
+                }
+                ,page: {
+                    curr: 1
+                }
+            });
+            return false;
+        })
     });
     function myrefresh(){
         window.location.reload();

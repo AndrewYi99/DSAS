@@ -14,7 +14,7 @@ public interface FoodService {
      * @param pageSize
      * @return
      */
-    public PageInfo selectALlFood(Integer pageNum, Integer pageSize);
+    public PageInfo selectALlFood(Integer pageNum, Integer pageSize,String keyword);
 
     /**
      * 根据菜品id删除菜品

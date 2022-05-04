@@ -42,11 +42,13 @@ public class FoodController {
     @PostMapping("/admin/foodData")
     @ResponseBody
     public CommonResult getAllFoods(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "limit", defaultValue = "5") Integer pageSize
+                                    @RequestParam(value = "limit", defaultValue = "5") Integer pageSize,
+                                    @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword
     ){
-        PageInfo pageInfo  = foodService.selectALlFood(pageNum, pageSize);
+        PageInfo pageInfo  = foodService.selectALlFood(pageNum, pageSize,keyword);
         return CommonResult.success(pageInfo);
     }
+
 
     @GetMapping("/admin/deleteFood/{id}")
     @ResponseBody
@@ -66,6 +68,54 @@ public class FoodController {
             return CommonResult.error(DSASExceptionEnum.UPDATE_FAILED);
         }
         return CommonResult.success();
+    }
+    /**
+     * 批量对用户列表进行操作
+     * @param ids
+     * @return
+     */
+    @PostMapping("/admin/changFoodsByIds")
+    @ResponseBody
+    public CommonResult ChangeFoodsByIds(String ids,String type){
+        int result= 0;
+        if (type.equals("del")){
+            int delSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = foodService.DelFoodById(id);
+                if (count !=0){
+                    delSum++;
+                }
+            }
+            result = delSum;
+        }else if (type.equals("stop")){
+            int stopSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = foodService.changeFoodState(id);
+                if (count !=0){
+                    stopSum++;
+                }
+            }
+            result = stopSum;
+        }else if (type.equals("start")){
+            int startSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = foodService.changeFoodState(id);
+                if (count !=0){
+                    startSum++;
+                }
+            }
+            result = startSum;
+        }
+        return CommonResult.success(result);
     }
 
     @PostMapping("/admin/foodStatus")

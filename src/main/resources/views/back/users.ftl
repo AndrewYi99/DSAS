@@ -478,7 +478,6 @@
             });
             })
         //搜索功能
-
         $('#search').click(function () {
             var keyword = $('#keyword').val();
             console.log(keyword)
@@ -502,7 +501,6 @@
             });
            return false;
         })
-
 
     });
 

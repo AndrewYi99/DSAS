@@ -30,8 +30,15 @@ public class FoodServiceImpl implements FoodService {
      * @return
      */
     @Override
-    public PageInfo selectALlFood(Integer pageNum, Integer pageSize) {
+    public PageInfo selectALlFood(Integer pageNum, Integer pageSize,String keyword) {
         PageHelper.startPage(pageNum,pageSize);
+        if (keyword != null){
+            List<Food> foods = foodMapper.selectFoodsByKeyword(keyword);
+            //生成分页对象
+            //将查询的结果存储到pageInfo中
+            PageInfo pageInfo = new PageInfo(foods);
+            return pageInfo;
+        }
         List<Food> foods = foodMapper.selectALlFoods();
         //生成分页对象
         //将查询的结果存储到pageInfo中
