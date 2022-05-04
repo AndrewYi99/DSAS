@@ -68,7 +68,12 @@
     </div>
 </div>
 <#--引入统一js-->
-<#include "footer.ftl">
+<script  src="/assets/js/jquery-3.2.1.min.js"></script>
+<script  src="/assets/js/popper.min.js"></script>
+<script  src="/assets/js/bootstrap.min.js"></script>
+<script  src="/assets/js/app.js"></script>
+<script  src="/assets/js/moment.min.js"></script>
+
 <script>
 
     function reloadVerifyCode() {

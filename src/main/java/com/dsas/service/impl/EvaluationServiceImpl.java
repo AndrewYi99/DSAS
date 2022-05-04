@@ -1,13 +1,17 @@
 package com.dsas.service.impl;
 
 import com.dsas.model.dao.EvaluationMapper;
+import com.dsas.model.dao.FoodMapper;
 import com.dsas.model.pojo.Evaluation;
+import com.dsas.model.pojo.Food;
+import com.dsas.model.request.CommEvaluation;
 import com.dsas.service.EvaluationService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,8 @@ import java.util.Map;
 public class EvaluationServiceImpl implements EvaluationService {
     @Resource
     EvaluationMapper evaluationMapper;
+    @Resource
+    FoodMapper foodMapper;
 
     /**
      * 根据评论id删除指定评论
@@ -146,6 +152,70 @@ public class EvaluationServiceImpl implements EvaluationService {
     public List<Evaluation> selectAllEvaluationAvg(){
         List<Evaluation> evaluations = evaluationMapper.selectAllFoodInfo();
         return evaluations;
+    }
+
+    /**
+     * 向数据库插入评论信息
+     *
+     * @param commEvaluation
+     */
+    @Override
+    public Integer insertEvaluation(CommEvaluation commEvaluation) {
+        //当用户评论的菜品为null时，会将该菜品插入
+//        Food DB_food = foodMapper.selectByFoodName(commEvaluation.getFoodName());
+//        if (DB_food == null){
+//            DB_food.setFoodName(commEvaluation.getFoodName());
+//            DB_food.setIsRecommend(1);
+//            DB_food.setFoodDescription(commEvaluation.getContent());
+//            DB_food.setCreateTime(new Date());
+//            DB_food.setStatus(0);
+//            foodMapper.createFood(DB_food);
+//        }
+        Food food = foodMapper.selectByFoodName(commEvaluation.getFoodName());
+        Evaluation evaluation = new Evaluation();
+        evaluation.setFoodName(commEvaluation.getFoodName());
+        evaluation.setEvaluationCategory(commEvaluation.getEvaluationCategory());
+        evaluation.setState("0");
+        evaluation.setContent(commEvaluation.getContent());
+        evaluation.setCreateTime(new Date());
+        evaluation.setUserId(commEvaluation.getUserId());
+        evaluation.setFoodId(food.getId());
+        evaluation.setLikes(commEvaluation.getLikes());
+        Integer count = evaluationMapper.insertSelective(evaluation);
+        return count;
+    }
+
+    /**
+     * 评论为菜品推荐时，需要判断当前菜品是否存在
+     *
+     * @param commEvaluation
+     * @return
+     */
+    @Override
+    public Integer createRecommendFoodEva(CommEvaluation commEvaluation) {
+        Integer count = 0;
+        if (foodMapper.selectByFoodName(commEvaluation.getFoodName()) == null){
+            Food food = new Food();
+            food.setFoodName(commEvaluation.getFoodName());
+            food.setStatus(0);
+            food.setIsRecommend(1);
+            food.setCreateTime(new Date());
+            food.setIsTodayFood(0);
+            count = foodMapper.createFood(food);
+        }
+        return count;
+    }
+
+    /**
+     * 插入其他评论
+     *
+     * @param evaluation
+     * @return
+     */
+    @Override
+    public Integer insertOtherEvaluation(Evaluation evaluation) {
+        int count = evaluationMapper.insertSelective(evaluation);
+        return count;
     }
 
 

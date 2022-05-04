@@ -73,4 +73,71 @@
     <delete id="delFoodById">
         delete from dsas_food where id = #{id,jdbcType=INTEGER}
     </delete>
+
+    <select id="selectByFoodName" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from dsas_food where food_name = #{foodName}
+    </select>
+
+    <insert id="createFood" parameterType="com.dsas.model.pojo.Food">
+        insert into dsas_food
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="foodName != null">
+                food_name,
+            </if>
+            <if test="foodDescription != null">
+                food_description,
+            </if>
+            <if test="foodImage != null">
+                food_image,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="isRecommend != null">
+                is_recommend,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="isTodayFood != null">
+                is_today_food,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="foodName != null">
+                #{foodName,jdbcType=VARCHAR},
+            </if>
+            <if test="foodDescription != null">
+                #{foodDescription,jdbcType=VARCHAR},
+            </if>
+            <if test="foodImage != null">
+                #{foodImage,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=INTEGER},
+            </if>
+            <if test="isRecommend != null">
+                #{isRecommend,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="isTodayFood != null">
+                #{isTodayFood,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
 </mapper>

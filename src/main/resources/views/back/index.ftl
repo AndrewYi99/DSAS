@@ -93,7 +93,6 @@
                 <div class="col-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="card">
                         <div class="card-body">
-
                             <div id="Funnel"></div>
                         </div>
                     </div>
@@ -104,9 +103,10 @@
 </div>
 
 <#include "footer.ftl">
-<script src="/assets/js/chart.js"></script>
-<script src="/assets/js/echarts.js"></script>
+<#--<script src="/assets/js/chart.js"></script>-->
+<#--<script src="/assets/js/echarts.js"></script>-->
 <script type="text/javascript">
+    console.log(echarts.version);
     let keys1 = new Array();
     let values1 = new Array();
     let echarts2Data = new Array();

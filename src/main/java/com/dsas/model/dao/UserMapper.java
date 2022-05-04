@@ -53,4 +53,6 @@ public interface UserMapper {
   Integer selectCount();
   //统计某天的访问次数
   Integer selectCountByTime(@Param("loginTime") Date loginTime);
+
+  List<User> selectByKeyWord(@Param("role")Integer role, @Param("keyword")String keyword);
 }

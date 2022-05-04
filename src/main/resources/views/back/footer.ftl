@@ -18,5 +18,4 @@
     <script  src="/assets/layui/layui.js"></script>
     <script src="/assets/js/chart.js"></script>
     <script src="/assets/js/echarts.js"></script>
-
 </footer>

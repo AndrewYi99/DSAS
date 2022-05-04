@@ -43,6 +43,18 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
+   * 根据用户名称获取当前用户
+   *
+   * @param username
+   * @return
+   */
+  @Override
+  public User selectUserByUserName(String username) {
+    User user = userMapper.selectByName(username);
+    return user;
+  }
+
+  /**
    * 用户注册
    * @param commUserRequest 注册请求体
    */
@@ -184,6 +196,9 @@ public class UserServiceImpl implements UserService {
         // 更新昵称
         userOld.setNickname(commUserRequest.getNickname());
       }
+      if (commUserRequest.getRole() !=null){
+        userOld.setRole(commUserRequest.getRole());
+      }
       userOld.setUpdateTime(new Date());
 
     // 更新数据库
@@ -253,9 +268,14 @@ public class UserServiceImpl implements UserService {
    * @return 分页对象
    */
   @Override
-  public PageInfo selectAllPageUsers(Integer pageNum, Integer pageSize,Integer role) {
+  public PageInfo selectAllPageUsers(Integer pageNum, Integer pageSize,Integer role,String keyword) {
     //执行分页操作
     PageHelper.startPage(pageNum,pageSize);
+    if (keyword != null){
+      List<User> users = userMapper.selectByKeyWord(role, keyword);
+      PageInfo pageInfo = new PageInfo(users);
+      return pageInfo;
+    }
     //根据role查询user数据
     List<User> users = userMapper.selectAllUsers(role);
     //生成分页对象

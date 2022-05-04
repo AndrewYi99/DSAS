@@ -96,8 +96,8 @@ public class AdminController {
     ModelAndView modelAndView = new ModelAndView("/back/index");
     ResponseIndexInfo responseIndexInfo = userService.selectIndexInfo();
     //查询最新10条评论
-    List<Evaluation> evaluations = evaluationService.selectRecentEvaluation();
-    modelAndView.addObject("recentEvaluations",evaluations);
+//    List<Evaluation> evaluations = evaluationService.selectRecentEvaluation();
+//    modelAndView.addObject("recentEvaluations",evaluations);
     User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
     modelAndView.addObject("currentAdmin", currentAdmin);
     modelAndView.addObject("responseIndexInfo",responseIndexInfo);
@@ -169,13 +169,14 @@ public class AdminController {
   public ModelAndView showUsers(
       @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
       @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+      @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
       HttpSession session) {
     ModelAndView modelAndView = new ModelAndView("/back/users");
     User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
     modelAndView.addObject("currentAdmin", currentAdmin);
     // 查询所有用户未分页
     // List<User> allUsers = userService.getAllUsers(currentAdmin.getRole());
-    PageInfo pageInfo = userService.selectAllPageUsers(pageNum, pageSize, currentAdmin.getRole());
+    PageInfo pageInfo = userService.selectAllPageUsers(pageNum, pageSize, currentAdmin.getRole(),keyword);
     modelAndView.addObject("pageInfo", pageInfo);
     return modelAndView;
   }
@@ -184,12 +185,18 @@ public class AdminController {
   @ResponseBody
   public CommonResult showAllUsers(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
                                    @RequestParam(value = "limit", defaultValue = "5") Integer pageSize,
+                                   @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword,
                                    HttpSession session){
     User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
-    PageInfo pageInfo = userService.selectAllPageUsers(pageNum, pageSize, currentAdmin.getRole());
+    PageInfo pageInfo = userService.selectAllPageUsers(pageNum, pageSize, currentAdmin.getRole(),keyword);
     return CommonResult.success(pageInfo);
   }
 
+  /**
+   * 根据指定id删除用户
+   * @param id 用户id
+   * @return
+   */
   @GetMapping("/admin/deleteUser/{id}")
   @OperationLogAnnotation(operationModel = "用户模块",operationType = "删除",operationDesc = "删除用户")
   @ResponseBody
@@ -200,6 +207,56 @@ public class AdminController {
     }
     return CommonResult.success();
   }
+
+  /**
+   * 批量对用户列表进行操作
+   * @param ids
+   * @return
+   */
+  @PostMapping("/admin/changeUsersByIds")
+  @ResponseBody
+  public CommonResult ChangeUsersByIds(String ids,String type){
+    int result= 0;
+    if (type.equals("del")){
+      int delSum = 0;
+      String[] split = ids.split(",");
+      for (int i = 0;i<split.length;i++){
+        int count = 0;
+        int id = Integer.parseInt(split[i]);
+        count = userService.delUserById(id);
+        if (count !=0){
+          delSum++;
+        }
+      }
+      result = delSum;
+    }else if (type.equals("stop")){
+      int stopSum = 0;
+      String[] split = ids.split(",");
+      for (int i = 0;i<split.length;i++){
+        int count = 0;
+        int id = Integer.parseInt(split[i]);
+        count = userService.changeStatus(id);
+        if (count !=0){
+          stopSum++;
+        }
+      }
+      result = stopSum;
+    }else if (type.equals("start")){
+      int startSum = 0;
+      String[] split = ids.split(",");
+      for (int i = 0;i<split.length;i++){
+        int count = 0;
+        int id = Integer.parseInt(split[i]);
+        count = userService.changeStatus(id);
+        if (count !=0){
+          startSum++;
+        }
+      }
+      result = startSum;
+    }
+    return CommonResult.success(result);
+  }
+
 
   /**
    * 根据用户id更改指定用户的状态
@@ -216,6 +273,8 @@ public class AdminController {
     }
     return CommonResult.success();
   }
+
+
 
   @PostMapping("/admin/UsersEcharts")
   @ResponseBody
@@ -249,7 +308,6 @@ public class AdminController {
    */
   @PostMapping("/admin/logEchart")
   @ResponseBody
-  @Cacheable(value = "getLogsEchart")
   public CommonResult getLogsEchart(@RequestParam("id") Integer userId){
     Map map = operationLogService.selectLogsEchart(userId);
     return CommonResult.success(map);

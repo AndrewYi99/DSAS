@@ -151,4 +151,78 @@
         ORDER BY totalCommentUser
         DESC limit 10
     </select>
+
+    <insert id="insertSelective" parameterType="com.dsas.model.pojo.Evaluation">
+        insert into dsas_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="evaluationId != null">
+                evaluation_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="foodId != null">
+                food_id,
+            </if>
+            <if test="evaluationCategory != null">
+                evaluation_category,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="likes != null">
+                likes,
+            </if>
+            <if test="state != null">
+                `state`,
+            </if>
+            <if test="disableReason != null">
+                disable_reason,
+            </if>
+            <if test="photo != null">
+                photo,
+            </if>
+            <if test="answer != null">
+                answer,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="evaluationId != null">
+               #{evaluationId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+               #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="foodId != null">
+                #{foodId,jdbcType=INTEGER},
+            </if>
+            <if test="evaluationCategory != null">
+                #{evaluationCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="likes != null">
+                #{likes,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="disableReason != null">
+                #{disableReason,jdbcType=VARCHAR},
+            </if>
+            <if test="photo != null">
+               #{photo,jdbcType=VARCHAR},
+            </if>
+            <if test="answer != null">
+                #{answer,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
 </mapper>

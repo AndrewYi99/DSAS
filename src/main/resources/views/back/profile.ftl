@@ -83,6 +83,7 @@
 </div>
 <#--引入统一底部-->
 <#include "footer.ftl">
+
 <script>
     layui.use('table', function(){
         var table = layui.table;

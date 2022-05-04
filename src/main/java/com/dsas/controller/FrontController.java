@@ -37,7 +37,6 @@ public class FrontController {
     @PostMapping("/showFrontEcharts1")
     @CrossOrigin
     @ResponseBody
-    @Cacheable(value = "showFrontEcharts1")
     public CommonResult showFrontEcharts1(){
         Map map = evaluationService.selectMapFoodEva();
         return CommonResult.success(map);
@@ -50,7 +49,6 @@ public class FrontController {
     @PostMapping("/showFrontEcharts2")
     @CrossOrigin
     @ResponseBody
-    @Cacheable(value = "showFrontEcharts2")
     public CommonResult showFrontEcharts2(){
         List<Evaluation> evaluations = evaluationService.selectAllEvaluationAvg();
         return CommonResult.success(evaluations);
@@ -63,7 +61,6 @@ public class FrontController {
     @PostMapping("/showFrontEcharts3")
     @CrossOrigin
     @ResponseBody
-    @Cacheable(value = "showFrontEcharts2")
     public CommonResult showFrontEcharts3(){
         Map dateCountMap = userService.selectIndexInfos();
         if (dateCountMap.isEmpty()){

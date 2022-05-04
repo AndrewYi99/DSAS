@@ -46,13 +46,28 @@
 </div>
 <div class="sidebar-overlay" data-reff=""></div>
 <#include "footer.ftl">
-<#--<script type="text/html" id="toolbarDemo">-->
+<script type="text/html" id="toolbarDemo">
 <#--    <div class="layui-btn-container">-->
+    <div class="layui-inline">
 <#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
 <#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>-->
 <#--        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
-<#--    </div>-->
-<#--</script>-->
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delAllSelect">删除选中</button>
+        <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="stopAllSelect">批量禁用</button>
+        <button class="layui-btn layui-btn-sm layui-btn-success" lay-event="startAllSelect">批量启用</button>
+    </div>
+<div class="layui-inline">
+    <div class="layui-inline">
+        <input class="layui-input" type="text" placeholder="模糊搜索用户名" autocomplete="off" name="keyword" id="keyword">
+    </div>
+    <button class="layui-btn" lay-submit="" lay-filer="search" id="search" data-type="reload">
+        <i class="layui-icon">&#xe615;</i>
+    </button>
+    <button type="reset" class="layui-btn layui-btn-primary" id="resetBtn" lay-event="reset">重置</button>
+</div>
+
+
+</script>
 <script type="text/html" id="editBar">
     <a class="layui-btn layui-btn-xs" lay-event="edit" style="color: white;">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
@@ -85,8 +100,24 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">重置密码</label>
                 <div class="layui-input-block">
-                    <input type="text" name="password"  id="password" required   placeholder="请输入新的密码"
+                    <input type="text" name="password"  id="password"  placeholder="请输入新的密码"
                            autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">设置用户权限</label>
+                <div class="layui-input-block">
+                    <select name="user_role" lay-verify="required" lay-filter="user_role">
+                        <option value="">请选择</option>
+                        <#if currentAdmin.role==2>
+                            <option value="1">普通用户</option>
+                        </#if>
+                        <#if currentAdmin.role==3>
+                            <option value="1">普通用户</option>
+                            <option value="2">普通管理员</option>
+                        </#if>
+
+                    </select>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -104,15 +135,13 @@
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
             </div>
-
         </form>
-
     </div>
 </script>
 
 <script>
 
-    layui.use('table', function(){
+    layui.use('table',function(){
         var table = layui.table;
         var form = layui.form;
 
@@ -168,6 +197,13 @@
         //工具栏事件
         table.on('toolbar(eva_table)', function(obj){
             var checkStatus = table.checkStatus(obj.config.id);
+            //用于存储待删除的用户
+            let arrForDel = [];
+            //用于提示不能删除的用户
+            let CantDel = [];
+            let arrForChange = [];
+            //存储不能修改状态的用户
+            let CantChange = [];
             switch(obj.event){
                 case 'getCheckData':
                     var data = checkStatus.data;
@@ -180,9 +216,149 @@
                 case 'isAll':
                     layer.msg(checkStatus.isAll ? '全选': '未全选')
                     break;
+                case 'reset':
+                    window.parent.location.reload();
+                    break;
+                //批量删除
+                case 'delAllSelect':
+                    layer.confirm("确定删除选中数据吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForDel.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==1){
+                                    CantDel.push(checkStatus.data[i].username)
+                                }
+                            }
+                            if (CantDel.length !=0){
+                                layer.alert("用户"+CantDel+"正在使用,不能删除",{icon:5,title:'提示'})
+                                CantDel = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForDel.join(",");
+                            //待删除的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changeUsersByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"del"},
+                                success:function (res) {
+                                    arrForDel = [];
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功删除"+res.data+"条数据",{icon:6,title:'提示'})
+                                        //window.parent.location.reload();
+                                        userTable.reload({url:'/admin/usersData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要删除的数据",{icon:0,title:'提示'})
+                        }
+                    });
+                    break;
+                //批量禁用
+                case 'stopAllSelect':
+                    layer.confirm("确定禁用选中的用户吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForChange.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==0){
+                                    //已经为禁用状态不能再进行禁用操作
+                                    CantChange.push(checkStatus.data[i].username)
+                                }
+                            }
+                            if (CantChange.length !=0){
+                                layer.alert("用户"+CantChange+"已经禁用,不能再进行禁用操作",{icon:5,title:'提示'})
+                                CantChange = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForChange.join(",");
+                            //待禁用的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changeUsersByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"stop"},
+                                success:function (res) {
+                                    arrForChange = [];
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功禁用"+res.data+"条数据",{icon:6,title:'提示'},function () {
+                                            window.parent.location.reload();
+                                        })
+                                        //userTable.reload({url:'/admin/usersData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要禁用的用户",{icon:0,title:'提示'})
+                        }
+                    });
+                    break;
+                //批量启用
+                case 'startAllSelect':
+                    layer.confirm("确定启用选中的用户吗？",{icon:3,title:'询问'},function (index) {
+                        layer.close(index);
+                        if (checkStatus.data.length !=0){
+                            //遍历选中的数据数组，获取其中的id值，存到一个指定数组中
+                            for (let i = 0;i<checkStatus.data.length;i++){
+                                arrForChange.push(checkStatus.data[i].id)
+                                if (checkStatus.data[i].status ==1){
+                                    //已经为启用状态不能再进行启用操作
+                                    CantChange.push(checkStatus.data[i].username)
+                                }
+                            }
+                            if (CantChange.length !=0){
+                                layer.alert("用户"+CantChange+"已经启用,不能再进行启用操作",{icon:5,title:'提示'})
+                                CantChange = [];
+                                return false;
+                            }
+                            //ajax是不能向后台发送数组数据的，所以需要对数据进行转换，可以转换成字符串
+                            let idsString = arrForChange.join(",");
+                            //待启用的id数组
+                            console.log(idsString);
+                            //return false;
+                            $.ajax({
+                                url:"/admin/changeUsersByIds",
+                                method:"POST",
+                                dataType:"JSON",
+                                data:{"ids":idsString,"type":"start"},
+                                success:function (res) {
+                                    console.log(res)
+                                    if (res.msg=="SUCCESS"){
+                                        console.log(res.data)
+                                        layer.alert("成功启用"+res.data+"条数据",{icon:6,title:'提示'},function () {
+                                            window.parent.location.reload();
+                                        })
+                                        //userTable.reload({url:'/admin/usersData'})
+                                    }else {
+                                        layer.alert(res.msg,{icon:5,title:'提示'})
+                                    }
+                                }
+                            })
+                        }else {
+                            layer.alert("请选中需要启用的用户",{icon:0,title:'提示'})
+                        }
+                    });
+                    break;
             };
         });
-
         //监听工具条
         table.on('tool(eva_table)', function(obj){
             var data = obj.data;
@@ -212,7 +388,7 @@
                 layer.open({
                     title:'修改用户信息',
                     type:1,
-                    area:['420px','330px'],
+                    area:['550px','480px'],
                     content:$('#edit_form').html(),
                 })
                 console.log(data.username)
@@ -223,7 +399,8 @@
                     user_id:obj.data.id,
                     user_name:obj.data.username,
                     mail_address:obj.data.email,
-                    nick_name:obj.data.nickname
+                    nick_name:obj.data.nickname,
+                    user_role:obj.data.role
                 })
 
             }else if (obj.event == 'disable'){
@@ -279,9 +456,11 @@
                     username:data.field.user_name,
                     nickname:data.field.nick_name,
                     password:data.field.password,
-                    email:data.field.mail_address
+                    email:data.field.mail_address,
+                    role:data.field.user_role
                 }
                 console.log(data.field)
+                console.log(userData)
                 // alert("提交更新")
                 //return false;
                 $.ajax({
@@ -298,9 +477,36 @@
                 })
             });
             })
+        //搜索功能
+
+        $('#search').click(function () {
+            var keyword = $('#keyword').val();
+            console.log(keyword)
+            if($('#keyword').val()==""){
+                layer.msg('查询内容不能为空');
+                return false;
+            }
+            table.reload('eva_table', {
+                url: '/admin/usersData',
+                methods:"post"
+                ,request: {
+                    pageName: 'page'
+                    ,limitName: 'limit'
+                }
+                ,where: {
+                    keyword: keyword
+                }
+                ,page: {
+                    curr: 1
+                }
+            });
+           return false;
+        })
 
 
     });
+
+
     function myrefresh(){
         window.location.reload();
     }
@@ -350,7 +556,6 @@
         })
 
     })
-
 
 
     function echart_users(data) {

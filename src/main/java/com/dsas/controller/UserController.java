@@ -48,6 +48,9 @@ public class UserController {
     if (commUserRequest.getPassword().length() < 6) {
       return CommonResult.error(DSASExceptionEnum.PASSWORD_TOO_SHORT);
     }
+    if (userService.selectUserByUserName(commUserRequest.getUsername())!=null){
+      return CommonResult.error(DSASExceptionEnum.NAME_EXISTED);
+    }
     // 插入当前用户
     userService.register(commUserRequest);
     return CommonResult.success();
@@ -78,6 +81,9 @@ public class UserController {
     }
     // 查询用户名和密码是否正确
     User result = userService.login(username, password);
+    if (result == null){
+      return CommonResult.error(DSASExceptionEnum.LOGIN_FAILED);
+    }
     // 为保证安全，返回对象时，不存储密码
     result.setPassword(null);
     // 将查询到的结果存储在session中便于用户一次性登陆

@@ -211,4 +211,14 @@
     <select id="selectCountByTime" resultType="Integer">
         select count(login_time) from dsas_user where 1=1 and DATE_FORMAT(login_time, '%Y-%m-%d') = DATE_FORMAT(#{loginTime},'%Y-%m-%d')
     </select>
+
+    <select id="selectByKeyWord" resultMap="BaseResultMap" parameterType="integer">
+        select
+        <include refid="Base_Column_List"/>
+        from  dsas_user where  1 = 1
+        <if test="keyword!=''">
+            and username like concat('%',#{keyword},'%')
+        </if>
+            and  <![CDATA[role <#{role}]]>  ORDER BY login_time
+    </select>
 </mapper>

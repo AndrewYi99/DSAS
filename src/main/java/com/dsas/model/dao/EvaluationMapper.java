@@ -38,5 +38,5 @@ public interface EvaluationMapper {
 
     List<Evaluation>selectAllFoodInfo();
 
-
+    int insertSelective(Evaluation evaluation);
 }

@@ -3,19 +3,23 @@ package com.dsas.controller;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
+import com.dsas.model.dao.FoodMapper;
 import com.dsas.model.pojo.Evaluation;
 import com.dsas.model.pojo.User;
+import com.dsas.model.request.CommEvaluation;
 import com.dsas.service.OperationLogService;
 import com.dsas.service.UserService;
 import com.dsas.service.impl.EvaluationServiceImpl;
 import com.github.pagehelper.PageInfo;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +31,9 @@ public class EvaluationController {
     OperationLogService operationLogService;
     @Resource
     EvaluationServiceImpl evaluationService;
+
+    @Resource
+    FoodMapper foodMapper;
 
     @GetMapping("/admin/showEvaluations")
     public ModelAndView showEvaluations(HttpSession session){
@@ -103,6 +110,71 @@ public class EvaluationController {
     public CommonResult getEvaCount(){
         Map map = evaluationService.selectMapFoodEva();
         return CommonResult.success(map);
+    }
+
+    @PostMapping("/evaluation/insertEva")
+    @ResponseBody
+    public CommonResult insertEvaluation(@RequestBody CommEvaluation commEvaluation){
+        if (!StringUtils.hasText(commEvaluation.getFoodName())){
+            return CommonResult.error(DSASExceptionEnum.NEED_FOOD_NAME);
+        }
+        if (commEvaluation.getEvaluationCategory() == 1 && foodMapper.selectByFoodName(commEvaluation.getFoodName())==null){
+            return CommonResult.error(DSASExceptionEnum.NO_FOOD);
+        }
+        if (commEvaluation.getEvaluationCategory() == 2 && foodMapper.selectByFoodName(commEvaluation.getFoodName())==null){
+            Integer recommendFoodEva = evaluationService.createRecommendFoodEva(commEvaluation);
+            if (recommendFoodEva !=0){
+                return CommonResult.success();
+            }else {
+                return CommonResult.error(DSASExceptionEnum.CREATE_FAILED);
+            }
+        }
+        if (!StringUtils.hasText(commEvaluation.getContent())){
+            return CommonResult.error(DSASExceptionEnum.NEED_CONTENT);
+        }
+        if (commEvaluation.getEvaluationCategory() == 1){
+            if (commEvaluation.getLikes() >10 || commEvaluation.getLikes() <1){
+                return CommonResult.error(DSASExceptionEnum.LIKES_ILLEGAL);
+            }
+        }
+
+        Integer count = evaluationService.insertEvaluation(commEvaluation);
+        if (count == 0){
+            return CommonResult.error(DSASExceptionEnum.INSERT_FAILED);
+        }
+        return CommonResult.success();
+    }
+
+    /**
+     * 插入其他建议
+     * @param title 建议标题
+     * @param content
+     * @param userId
+     * @return
+     */
+    @PostMapping("/evaluation/insertOtherEva")
+    @ResponseBody
+    public CommonResult insertOtherEva(@RequestParam("title") String title,
+                                       @RequestParam("content") String content,
+                                       @RequestParam("userId") String userId){
+        if (!StringUtils.hasText(title)){
+            return CommonResult.error(DSASExceptionEnum.NEED_TITLE);
+        }
+        if (!StringUtils.hasText(content)){
+            return CommonResult.error(DSASExceptionEnum.NEED_CONTENT);
+        }
+        Evaluation evaluation = new Evaluation();
+        evaluation.setFoodId(99999);
+        evaluation.setUserId(Integer.valueOf(userId));
+        evaluation.setContent("<"+title+">: "+content);
+        evaluation.setEvaluationCategory(3);
+        evaluation.setState("0");
+        evaluation.setCreateTime(new Date());
+        Integer count = evaluationService.insertOtherEvaluation(evaluation);
+        if (count == 0){
+            return CommonResult.error(DSASExceptionEnum.INSERT_FAILED);
+        }
+        return CommonResult.success();
     }
 
 

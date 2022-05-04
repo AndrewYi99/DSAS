@@ -11,8 +11,19 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
+    /**
+     * 根据用户id获取当前用户
+     * @param id
+     * @return
+     */
     User getUser(Integer id);
 
+    /**
+     * 根据用户名称获取当前用户
+     * @param username
+     * @return
+     */
+    User selectUserByUserName(String username);
     /**
      * 用户注册
      * @param commUserRequest
@@ -59,7 +70,7 @@ public interface UserService {
      * @param role     查询权限
      * @return 分页对象
      */
-    PageInfo selectAllPageUsers(Integer pageNum, Integer pageSize, Integer role);
+    PageInfo selectAllPageUsers(Integer pageNum, Integer pageSize, Integer role,String keyword);
 
 
 

@@ -218,7 +218,7 @@
                 layer.open({
                     title:'修改菜品信息',
                     type:1,
-                    area:['550px','500px'],
+                    area:['550px','490px'],//弹出框的大小
                     content:$('#edit_form').html(),
                 })
                 form.render()//更新渲染表单
@@ -226,7 +226,9 @@
                     //填充表单
                     food_id:data.id,
                     food_name:data.foodName,
-                    food_description:data.foodDescription
+                    food_description:data.foodDescription,
+                    food_isRecommend:data.isRecommend,
+                    food_isTodayFood:data.isTodayFood
                 })
             }else if (obj.event == 'disable'){
                 layer.confirm('真停用吗', function(index){

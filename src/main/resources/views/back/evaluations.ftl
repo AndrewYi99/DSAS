@@ -28,7 +28,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="chart-title">
-                                <h5>评论分布统计</h5>
+                                <h5>热门菜品评论分布统计</h5>
                             </div>
                             <div id="eva_category" style="width: 100%;height: 200px;display: block"></div>
                         </div>
@@ -46,13 +46,14 @@
 </div>
 <div class="sidebar-overlay" data-reff=""></div>
 <#include "footer.ftl">
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-    </div>
-</script>
+
+<#--<script type="text/html" id="toolbarDemo">-->
+<#--    <div class="layui-btn-container">-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>-->
+<#--        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>-->
+<#--    </div>-->
+<#--</script>-->
 <script type="text/html" id="editBar">
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" style="color: white;">删除</a>
 </script>
@@ -82,14 +83,18 @@
             ,title: '用户数据表',
            cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                ,{field:'evaluationId',title:'id', fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
-                ,{field:'userId', title:'用户id', sort: true, edit: 'text'}
-                ,{field:'userName', title:'用户名称',sort: true, edit: 'text'}
-                ,{field:'foodId', title:'菜品id',  sort: true,edit: 'text'}
-                ,{field:'foodName', title:'菜品名称',  sort: true,edit: 'text'}
-                ,{field:'evaluationCategory', title:'评论分类', edit: 'text',templet: function(res){
+                ,{field:'userId', title:'用户id', sort: true}
+                ,{field:'userName', title:'用户名称',sort: true}
+                ,{field:'foodName', title:'评论目标',sort: true,templet: function(res){
+                    if (res.foodName == "非菜品"){
+                        return '<b class="text-danger">非菜品</b>'
+                    }else {
+                        return res.foodName;
+                    }
+                   }}
+                ,{field:'evaluationCategory', title:'评论分类', templet: function(res){
                     if (res.evaluationCategory==1){
-                        return '<b class="text-success">菜品建议</b>'
+                        return '<b class="text-success">菜品评价</b>'
                     }else if (res.evaluationCategory == 2){
                         return '<b class="text-danger">菜品推荐</b>'
                     }else if (res.evaluationCategory == 3){
