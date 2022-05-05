@@ -55,7 +55,7 @@
     </div>
     <div class="layui-inline">
         <div class="layui-inline">
-            <input class="layui-input" type="text" placeholder="模糊搜索菜品名" autocomplete="off" name="keyword" id="keyword">
+            <input class="layui-input" type="text" placeholder="菜品名/描述" autocomplete="off" name="keyword" id="keyword">
         </div>
         <button class="layui-btn" lay-submit="" lay-filer="searchFood" id="searchFood" data-type="reload">
             <i class="layui-icon">&#xe615;</i>

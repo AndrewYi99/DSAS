@@ -4,6 +4,7 @@ import com.dsas.annotation.OperationLogAnnotation;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
+import com.dsas.listener.OnlineSessionListener;
 import com.dsas.model.dao.UserMapper;
 import com.dsas.model.pojo.Evaluation;
 import com.dsas.model.pojo.OperationLog;
@@ -16,6 +17,8 @@ import com.dsas.service.UserService;
 import com.dsas.util.VerifyCodeUtil;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
+import org.apache.tomcat.util.http.parser.HttpParser;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +38,8 @@ public class AdminController {
   @Resource OperationLogService operationLogService;
   @Resource
   EvaluationService evaluationService;
+
+
 
   /**
    * 跳转管理员登陆页面
@@ -77,6 +82,7 @@ public class AdminController {
       result.setPassword(null);
       // 将查询到的结果存储在session中便于用户一次性登陆
       session.setAttribute(Constant.DSAS_ADMIN, result);
+      //session.setAttribute("onlineNum",OnlineSessionListener.online);
       // 返回查询到的用户对象
       return CommonResult.success(result);
     } else {
@@ -99,6 +105,9 @@ public class AdminController {
 //    List<Evaluation> evaluations = evaluationService.selectRecentEvaluation();
 //    modelAndView.addObject("recentEvaluations",evaluations);
     User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
+    int online = OnlineSessionListener.online;
+    System.err.println(online);
+    modelAndView.addObject("onlineNum",online);
     modelAndView.addObject("currentAdmin", currentAdmin);
     modelAndView.addObject("responseIndexInfo",responseIndexInfo);
     return modelAndView;
@@ -171,13 +180,6 @@ public class AdminController {
     return CommonResult.success(map);
   }
 
-//  @PostMapping("/admin/UsersLoginEcharts")
-//  @ResponseBody
-//  public CommonResult selectUserLoginEchartsInfo(HttpSession session){
-//    User currentAdmin = (User) session.getAttribute(Constant.DSAS_ADMIN);
-//    Map map = userService.selectUserLoginEchartsInfo(currentAdmin.getRole());
-//    return CommonResult.success(map);
-//  }
   /**
    * 根据id查询用户
    * @param userId
@@ -211,6 +213,9 @@ public class AdminController {
   @GetMapping("/admin/logout")
   public String AdminLogout(HttpSession session) {
     session.removeAttribute(Constant.DSAS_ADMIN);
+    session.invalidate();
+    int online = OnlineSessionListener.online;
+    System.err.println(online);
     return "redirect:/admin/index";
   }
 }

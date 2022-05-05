@@ -1,5 +1,6 @@
 package com.dsas.controller;
 
+import com.dsas.annotation.OperationLogAnnotation;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
@@ -52,6 +53,7 @@ public class FoodController {
 
     @GetMapping("/admin/deleteFood/{id}")
     @ResponseBody
+    @OperationLogAnnotation(operationModel = "菜品模块", operationType = "删除", operationDesc = "根据id删除指定菜品")
     public CommonResult delFood(@PathVariable("id") String id){
         Integer count = foodService.DelFoodById(Integer.valueOf(id));
         if (count == 0){
@@ -62,6 +64,7 @@ public class FoodController {
 
     @GetMapping("/admin/changeFood/{id}")
     @ResponseBody
+    @OperationLogAnnotation(operationModel = "菜品模块", operationType = "更新", operationDesc = "根据id修改菜品状态")
     public CommonResult changeFoodState(@PathVariable("id") String id){
         Integer count = foodService.changeFoodState(Integer.valueOf(id));
         if (count == 0){
@@ -76,6 +79,7 @@ public class FoodController {
      */
     @PostMapping("/admin/changFoodsByIds")
     @ResponseBody
+    @OperationLogAnnotation(operationModel = "菜品模块", operationType = "批量修改", operationDesc = "根据id数组修改菜品状态")
     public CommonResult ChangeFoodsByIds(String ids,String type){
         int result= 0;
         if (type.equals("del")){
@@ -133,6 +137,7 @@ public class FoodController {
     @PostMapping("/admin/foodUpdate")
     @ResponseBody
     @Transactional(rollbackFor = Exception.class)
+    @OperationLogAnnotation(operationModel = "菜品模块", operationType = "更新", operationDesc = "修改菜品信息")
     public CommonResult updateFoodInfo(@RequestBody Food food){
         Integer count = foodService.updateFood(food);
         if (count==0){

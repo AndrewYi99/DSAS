@@ -60,7 +60,7 @@
                     <div class="dash-widget">
                         <span class="dash-widget-bg4"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
                         <div class="dash-widget-info text-right">
-                            <h3>1</h3>
+                            <h3>${onlineNum}</h3>
                             <span class="widget-title4">网站在线人数 <i class="fa fa-check" aria-hidden="true"></i></span>
                         </div>
                     </div>

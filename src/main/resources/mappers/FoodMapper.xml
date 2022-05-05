@@ -66,15 +66,16 @@
     </select>
 
     <select id="selectALlFoods" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from dsas_food
+        select <include refid="Base_Column_List"/> from dsas_food order by create_time desc
     </select>
 
     <select id="selectFoodsByKeyword" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/> from dsas_food
         where  1 = 1
         <if test="keyword!=''">
-            and food_name like concat('%',#{keyword},'%')
+            and concat(food_name,food_description) like concat('%',#{keyword},'%')
         </if>
+        order by create_time desc
     </select>
 
     <delete id="delFoodById">

@@ -12,7 +12,14 @@ import java.util.Map;
 public interface EvaluationService {
     Integer DelEvaluationById(Integer id);
 
-    PageInfo selectAllEvaluation(Integer pageNum, Integer pageSize);
+    /**
+     * 分页查询评论数据
+     * @param pageNum 起始页
+     * @param pageSize 页大小
+     * @param keyword 搜索关键字
+     * @return
+     */
+    PageInfo selectAllEvaluation(Integer pageNum, Integer pageSize,String keyword);
 
     Integer changeEvaluationState(Integer valueOf);
 

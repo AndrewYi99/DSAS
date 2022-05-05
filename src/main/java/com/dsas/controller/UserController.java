@@ -168,6 +168,7 @@ public class UserController {
    */
   @PostMapping("/admin/changeUsersByIds")
   @ResponseBody
+  @OperationLogAnnotation(operationModel = "用户模块",operationType = "更新",operationDesc = "根据id数组修改用户状态")
   public CommonResult ChangeUsersByIds(String ids,String type){
     int result= 0;
     if (type.equals("del")){

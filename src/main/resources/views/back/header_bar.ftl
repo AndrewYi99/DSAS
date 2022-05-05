@@ -1,6 +1,6 @@
 <div class="header">
     <div class="header-left">
-        <a href="/admin/showIndex" class="logo">
+        <a href="/admin/showIndex?ts=${.now?long}" class="logo">
             <img src="/assets/img/logo.png" width="35" height="35" alt=""> <span>DSAS后台</span>
         </a>
     </div>
@@ -95,8 +95,8 @@
                 <span>${currentAdmin.nickname}</span>
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="/admin/showAdminProfile">我的信息</a>
-                <a class="dropdown-item" href="/admin/showEditProfile">编辑个人信息</a>
+                <a class="dropdown-item" href="/admin/showAdminProfile?ts=${.now?long}">我的信息</a>
+                <a class="dropdown-item" href="/admin/showEditProfile?ts=${.now?long}">编辑个人信息</a>
                 <a class="dropdown-item" href="/admin/logout">登出</a>
             </div>
         </li>
@@ -105,8 +105,8 @@
     <div class="dropdown mobile-user-menu float-right">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item" href="/admin/showAdminProfile">我的信息</a>
-            <a class="dropdown-item" href="/admin/showEditProfile">编辑个人信息</a>
+            <a class="dropdown-item" href="/admin/showAdminProfile?ts=${.now?long}">我的信息</a>
+            <a class="dropdown-item" href="/admin/showEditProfile?ts=${.now?long}">编辑个人信息</a>
             <a class="dropdown-item" href="/admin/logout">登出</a>
         </div>
     </div>

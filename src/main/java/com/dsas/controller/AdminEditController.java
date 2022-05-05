@@ -1,5 +1,6 @@
 package com.dsas.controller;
 
+import com.dsas.annotation.OperationLogAnnotation;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
@@ -51,6 +52,7 @@ public class AdminEditController {
     @PostMapping("/admin/updateAdmin")
     @ResponseBody
     @ApiOperation("更新用户数据")
+    @OperationLogAnnotation(operationModel = "管理员模块", operationType = "更新", operationDesc = "更新管理员信息")
     public CommonResult updateAdminInfo(
             @RequestBody @Valid CommUserRequest commUserRequest,HttpSession session) {
         // 更新用户
@@ -68,6 +70,7 @@ public class AdminEditController {
     @PostMapping("/admin/update")
     @ResponseBody
     @ApiOperation("更新用户数据")
+    @OperationLogAnnotation(operationModel = "用户模块", operationType = "更新", operationDesc = "更新用户信息")
     public CommonResult updateInfo(
             @RequestBody @Valid CommUserRequest commUserRequest) {
         // 更新用户
@@ -103,9 +106,5 @@ public class AdminEditController {
         }
         return CommonResult.error(DSASExceptionEnum.NONE_USER);
     }
-
-
-
-
 
 }

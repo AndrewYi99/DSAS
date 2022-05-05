@@ -110,6 +110,35 @@
             de.user_id = du.id
           AND
             de.food_id = df.id
+            order by create_time desc
+    </select>
+
+    <select id="selectAllEvaluationsByKeyword" resultMap="BaseResultMap">
+        select
+            de.evaluation_id,
+            de.user_id,
+            du.username,
+            de.food_id,
+            df.food_name,
+            de.evaluation_category,
+            de.content,
+            de.likes,
+            de.state,
+            de.disable_reason,
+            de.photo,
+            de.answer,
+            de.create_time,
+            de.update_time
+        from  dsas_evaluation de,dsas_food df,dsas_user du
+        WHERE   1 = 1
+        <if test="keyword!=''">
+            and CONCAT(de.content,df.food_name) like concat('%',#{keyword},'%')
+        </if>
+        AND
+            de.user_id = du.id
+        AND
+            de.food_id = df.id
+            order by create_time desc
     </select>
 
     <delete id="delEvaluationById">

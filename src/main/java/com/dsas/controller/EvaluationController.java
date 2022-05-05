@@ -1,5 +1,6 @@
 package com.dsas.controller;
 
+import com.dsas.annotation.OperationLogAnnotation;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
@@ -46,14 +47,16 @@ public class EvaluationController {
     @PostMapping("/admin/evaluationData")
     @ResponseBody
     public CommonResult getEvaluation(@RequestParam(value = "page", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(value = "limit", defaultValue = "5") Integer pageSize
+                                      @RequestParam(value = "limit", defaultValue = "5") Integer pageSize,
+                                      @RequestParam(name = "keyword",required = false,defaultValue = "") String keyword
                                       ){
-        PageInfo pageInfo = evaluationService.selectAllEvaluation(pageNum,pageSize);
+        PageInfo pageInfo = evaluationService.selectAllEvaluation(pageNum,pageSize,keyword);
         return CommonResult.success(pageInfo);
     }
 
     @GetMapping("/admin/deleteEvaluation/{id}")
     @ResponseBody
+    @OperationLogAnnotation(operationModel = "评论模块", operationType = "删除", operationDesc = "根据id删除指定评论")
     public CommonResult delEvaluation(@PathVariable("id") String id){
         Integer count = evaluationService.DelEvaluationById(Integer.valueOf(id));
         if (count == 0){
@@ -64,6 +67,7 @@ public class EvaluationController {
 
     @GetMapping("/admin/changeEvaluation/{id}")
     @ResponseBody
+    @OperationLogAnnotation(operationModel = "评论模块", operationType = "更新", operationDesc = "根据id修改评论状态")
     public CommonResult changeEvaluationState(@PathVariable("id") String id){
         Integer count = evaluationService.changeEvaluationState(Integer.valueOf(id));
         if (count == 0){
@@ -72,6 +76,50 @@ public class EvaluationController {
         return CommonResult.success();
     }
 
+    @PostMapping("/admin/changEvaluationsByIds")
+    @ResponseBody
+    @OperationLogAnnotation(operationModel = "评论模块", operationType = "批量修改", operationDesc = "根据id数组修改评论状态")
+    public CommonResult ChangeEvaluationsByIds(String ids,String type){
+        int result= 0;
+        if (type.equals("del")){
+            int delSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = evaluationService.DelEvaluationById(id);
+                if (count !=0){
+                    delSum++;
+                }
+            }
+            result = delSum;
+        }else if (type.equals("stop")){
+            int stopSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = evaluationService.changeEvaluationState(id);
+                if (count !=0){
+                    stopSum++;
+                }
+            }
+            result = stopSum;
+        }else if (type.equals("start")){
+            int startSum = 0;
+            String[] split = ids.split(",");
+            for (int i = 0;i<split.length;i++){
+                int count = 0;
+                int id = Integer.parseInt(split[i]);
+                count = evaluationService.changeEvaluationState(id);
+                if (count !=0){
+                    startSum++;
+                }
+            }
+            result = startSum;
+        }
+        return CommonResult.success(result);
+    }
     /**
      * 查询评论分类图的数据
      * @return

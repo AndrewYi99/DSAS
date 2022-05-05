@@ -217,7 +217,7 @@
         <include refid="Base_Column_List"/>
         from  dsas_user where  1 = 1
         <if test="keyword!=''">
-            and username like concat('%',#{keyword},'%')
+            and concat(username,nickname,email) like concat('%',#{keyword},'%')
         </if>
             and  <![CDATA[role <#{role}]]>  ORDER BY login_time
     </select>

@@ -32,6 +32,8 @@ public interface EvaluationMapper {
      */
     List<Evaluation> selectAllEvaluations();
 
+    List<Evaluation> selectAllEvaluationsByKeyword(@Param("keyword") String keyword);
+
     Integer delEvaluationById(@Param("evaluationId") Integer id);
 
     List<Evaluation> selectRecentEvaluation();

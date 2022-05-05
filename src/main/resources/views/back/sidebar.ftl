@@ -14,16 +14,16 @@
                 <#--点击时添加该样式：class="active"-->
                 <li class="menu-title">菜单列表</li>
                 <li>
-                    <a href="/admin/showIndex"><i class="fa fa-dashboard"></i> <span>控制面板</span></a>
+                    <a href="/admin/showIndex?ts=${.now?long}"><i class="fa fa-dashboard"></i> <span>控制面板</span></a>
                 </li>
                 <li>
-                    <a href="/admin/showUsers"><i class="fa fa-user-md"></i> <span>用户列表</span></a>
+                    <a href="/admin/showUsers?ts=${.now?long}"><i class="fa fa-user-md"></i> <span>用户列表</span></a>
                 </li>
                 <li>
-                    <a href="/admin/showFood"><i class="fa fa-coffee"></i> <span>菜品列表</span></a>
+                    <a href="/admin/showFood?ts=${.now?long}"><i class="fa fa-coffee"></i> <span>菜品列表</span></a>
                 </li>
                 <li>
-                    <a href="/admin/showEvaluations"><i class="fa fa-comments"></i> <span>评论列表</span></a>
+                    <a href="/admin/showEvaluations?ts=${.now?long}"><i class="fa fa-comments"></i> <span>评论列表</span></a>
                 </li>
 
 

@@ -41,9 +41,16 @@ public class EvaluationServiceImpl implements EvaluationService {
      * @return
      */
     @Override
-    public PageInfo selectAllEvaluation(Integer pageNum, Integer pageSize) {
+    public PageInfo selectAllEvaluation(Integer pageNum, Integer pageSize,String keyword) {
         //执行分页操作
         PageHelper.startPage(pageNum,pageSize);
+        //模糊查询分页结果
+        if (keyword !=null){
+            List<Evaluation> evaluations = evaluationMapper.selectAllEvaluationsByKeyword(keyword);
+            PageInfo pageInfo = new PageInfo(evaluations);
+            //将查询的结果存储到pageInfo中
+            return pageInfo;
+        }
         List<Evaluation> evaluations = evaluationMapper.selectAllEvaluations();
         //生成分页对象
         //将查询的结果存储到pageInfo中
