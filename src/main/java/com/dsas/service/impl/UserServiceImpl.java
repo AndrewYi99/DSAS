@@ -65,6 +65,8 @@ public class UserServiceImpl implements UserService {
     int count = 0;
     if (!checkUserConflict(commUserRequest)){
       user.setUsername(commUserRequest.getUsername());
+      user.setNickname(commUserRequest.getNickname());
+      user.setEmail(commUserRequest.getEmail());
       try {
         // 使用md5工具类进行加密
         String md5Str = MD5Utils.getMD5Str(commUserRequest.getPassword());

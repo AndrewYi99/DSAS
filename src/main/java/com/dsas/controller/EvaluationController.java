@@ -212,9 +212,9 @@ public class EvaluationController {
             return CommonResult.error(DSASExceptionEnum.NEED_CONTENT);
         }
         Evaluation evaluation = new Evaluation();
-        evaluation.setFoodId(99999);
+        evaluation.setFoodId(101);
         evaluation.setUserId(Integer.valueOf(userId));
-        evaluation.setContent("<"+title+">: "+content);
+        evaluation.setContent(title+": "+content);
         evaluation.setEvaluationCategory(3);
         evaluation.setState("0");
         evaluation.setCreateTime(new Date());

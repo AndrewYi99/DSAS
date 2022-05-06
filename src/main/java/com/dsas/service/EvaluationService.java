@@ -51,4 +51,11 @@ public interface EvaluationService {
      * @return
      */
     Integer insertOtherEvaluation(Evaluation evaluation);
+
+    /**
+     * 获取指定用户的评论列表
+     * @param userid
+     * @return
+     */
+    List<Evaluation> selectEvaluationByUserId(Integer userid);
 }

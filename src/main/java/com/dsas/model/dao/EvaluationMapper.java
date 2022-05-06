@@ -41,4 +41,6 @@ public interface EvaluationMapper {
     List<Evaluation>selectAllFoodInfo();
 
     int insertSelective(Evaluation evaluation);
+
+    List<Evaluation> selectEvaluationByUserId(Integer userid);
 }

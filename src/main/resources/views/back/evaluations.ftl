@@ -54,7 +54,7 @@
     </div>
     <div class="layui-inline">
         <div class="layui-inline">
-            <input class="layui-input" type="text" placeholder="评论目标/内容" autocomplete="off" name="keyword" id="keyword">
+            <input class="layui-input" type="text" placeholder="评论目标/内容/用户名" autocomplete="off" name="keyword" id="keyword">
         </div>
         <button class="layui-btn" lay-submit="" lay-filer="searchEva" id="searchEva" data-type="reload">
             <i class="layui-icon">&#xe615;</i>

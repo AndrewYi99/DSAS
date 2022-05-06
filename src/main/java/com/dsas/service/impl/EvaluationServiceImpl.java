@@ -2,12 +2,15 @@ package com.dsas.service.impl;
 
 import com.dsas.model.dao.EvaluationMapper;
 import com.dsas.model.dao.FoodMapper;
+import com.dsas.model.dao.UserMapper;
 import com.dsas.model.pojo.Evaluation;
 import com.dsas.model.pojo.Food;
+import com.dsas.model.pojo.User;
 import com.dsas.model.request.CommEvaluation;
 import com.dsas.service.EvaluationService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,6 +25,9 @@ public class EvaluationServiceImpl implements EvaluationService {
     EvaluationMapper evaluationMapper;
     @Resource
     FoodMapper foodMapper;
+
+    @Resource
+    UserMapper userMapper;
 
     /**
      * 根据评论id删除指定评论
@@ -208,6 +214,7 @@ public class EvaluationServiceImpl implements EvaluationService {
             food.setIsRecommend(1);
             food.setCreateTime(new Date());
             food.setIsTodayFood(0);
+            food.setFoodDescription("菜品推荐人:"+userMapper.selectByPrimaryKey(commEvaluation.getUserId()).getUsername());
             count = foodMapper.createFood(food);
         }
         return count;
@@ -223,6 +230,18 @@ public class EvaluationServiceImpl implements EvaluationService {
     public Integer insertOtherEvaluation(Evaluation evaluation) {
         int count = evaluationMapper.insertSelective(evaluation);
         return count;
+    }
+
+    /**
+     * 获取指定用户的评论列表
+     *
+     * @param userid
+     * @return
+     */
+    @Override
+    public List<Evaluation> selectEvaluationByUserId(Integer userid) {
+        List<Evaluation> evaluations = evaluationMapper.selectEvaluationByUserId(userid);
+        return evaluations;
     }
 
 

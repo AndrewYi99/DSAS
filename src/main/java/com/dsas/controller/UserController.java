@@ -4,8 +4,10 @@ import com.dsas.annotation.OperationLogAnnotation;
 import com.dsas.common.CommonResult;
 import com.dsas.common.Constant;
 import com.dsas.exception.DSASExceptionEnum;
+import com.dsas.model.pojo.Evaluation;
 import com.dsas.model.pojo.User;
 import com.dsas.model.request.CommUserRequest;
+import com.dsas.service.EvaluationService;
 import com.dsas.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
@@ -17,11 +19,15 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class UserController {
 
   @Resource UserService userService;
+
+  @Resource
+  EvaluationService evaluationService;
 
 //  @GetMapping("/test")
 //  @ResponseBody
@@ -224,6 +230,23 @@ public class UserController {
     Integer count = userService.changeStatus(Integer.valueOf(id));
     if (count == 0){
       return CommonResult.error(DSASExceptionEnum.UPDATE_FAILED);
+    }
+    return CommonResult.success();
+  }
+
+  @PostMapping("/user/evaluationDataForUser")
+  @ResponseBody
+  public CommonResult getCurrentUserEvaluationData(Integer userid){
+    List<Evaluation> evaluations = evaluationService.selectEvaluationByUserId(userid);
+    return CommonResult.success(evaluations);
+  }
+
+  @PostMapping("/user/deleteEvaluation")
+  @ResponseBody
+  public CommonResult delEvaluation(@RequestParam("id") String id){
+    Integer count = evaluationService.DelEvaluationById(Integer.valueOf(id));
+    if (count == 0){
+      return CommonResult.error(DSASExceptionEnum.DELETE_FAILED);
     }
     return CommonResult.success();
   }
